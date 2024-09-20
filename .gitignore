@@ -50,3 +50,7 @@
 
 # Embedded web-server pid file
 /.web-server-pid
+
+# Ignorer les fichiers de configuration spécifiques à l'utilisateur
+.vscode/
+.idea/
