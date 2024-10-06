@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 29, 2024 at 12:07 PM
+-- Generation Time: Oct 06, 2024 at 04:25 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -58,9 +58,13 @@ CREATE TABLE `comics` (
 --
 
 CREATE TABLE `comment` (
-  `id_user` int NOT NULL,
-  `id_chapter` int NOT NULL,
-  `text_comment` text NOT NULL
+  `comment_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `comics_id` int NOT NULL,
+  `chapter_id` int NOT NULL,
+  `parent_id` int DEFAULT NULL,
+  `comment` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -121,8 +125,11 @@ ALTER TABLE `comics`
 -- Indexes for table `comment`
 --
 ALTER TABLE `comment`
-  ADD PRIMARY KEY (`id_user`,`id_chapter`),
-  ADD KEY `id_chapter` (`id_chapter`);
+  ADD PRIMARY KEY (`comment_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `comics_id` (`comics_id`),
+  ADD KEY `chapter_id` (`chapter_id`),
+  ADD KEY `parent_id` (`parent_id`);
 
 --
 -- Indexes for table `favorite`
@@ -162,6 +169,12 @@ ALTER TABLE `comics`
   MODIFY `id_comics` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `comment`
+--
+ALTER TABLE `comment`
+  MODIFY `comment_id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
@@ -181,8 +194,10 @@ ALTER TABLE `chapter`
 -- Constraints for table `comment`
 --
 ALTER TABLE `comment`
-  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE,
-  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`id_chapter`) REFERENCES `chapter` (`id_chapter`) ON DELETE CASCADE;
+  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id_user`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`comics_id`) REFERENCES `comics` (`id_comics`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comment_ibfk_3` FOREIGN KEY (`chapter_id`) REFERENCES `chapter` (`id_chapter`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comment_ibfk_4` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `favorite`
