@@ -1,29 +1,16 @@
 <?php
 session_start();
 include_once("./header.php");
+if (isset($_GET["research"])) {
+    $research = $_GET["research"];
+} else {
+    echo "Aucune recherche effectuée.";
+    exit(); // Sortir si aucune recherche n'est fournie
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>recherche comics</title>
-</head>
-
 <body>
-    <!-- research comics -->
-    <div>
-    <form action="" method="post">
-        <label for="research">recherche nom du comics</label>
-        <input type="text" name="research" id="research">
-        <input type="submit" name="submit" value="research">
-    </form></div>
-
     <?php
-    //envoie de la recherche
-    if (isset($_POST["submit"])) {
-        $research = $_POST["research"];
         //recherche les comics
         $research_req = $bdd->prepare('SELECT * from comics WHERE title_comics LIKE :r');
         $research_req->execute(["r" => "%". $research. "%"]);
@@ -37,7 +24,6 @@ include_once("./header.php");
             echo($r["title_comics"] . " de " . $r["author"]);
             echo("</div>");
         }
-    }
     ?>
 </body>
 </html>
