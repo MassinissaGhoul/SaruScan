@@ -4,10 +4,11 @@ require_once 'comics.php'; // Inclusion des classes
 
 // Récupération des comics dans la base de données
 $comicsManager = new ComicsManager();
-$query = $bdd->query("SELECT * FROM comics");
+$query = $bdd->query("SELECT * FROM comics ");
+
 
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['category']);
+    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['image_path']);
     $comicsManager->add_comics($comics);
 }
 
@@ -26,9 +27,9 @@ if (!empty($search)) {
     if (!empty($results)) {
         echo "<h2>Résultats de recherche :</h2>";
         foreach ($results as $comics) {
+            echo '<img src ="' . $comics->get_img() . '" width="200px">';
             echo "Titre : " . $comics->get_title_comics() . "<br>";
             echo "Auteur : " . $comics->get_author() . "<br>";
-            echo "Catégorie : " . $comics->get_category() . "<br><br>";
         }
     } else {
         echo "Aucun résultat trouvé pour '$search'.";

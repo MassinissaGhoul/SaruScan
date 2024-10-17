@@ -5,15 +5,15 @@ class Comics
     private $title_comics;
     private $author;
     private $created_at;
-    private $category;
+    private $img_path;
 
-    public function __construct($id_comics, $title_comics, $author, $created_at, $category)
+    public function __construct($id_comics, $title_comics, $author, $created_at, $img_path)
     {
         $this->id_comics = $id_comics;
         $this->title_comics = $title_comics;
         $this->author = $author;
         $this->created_at = $created_at;
-        $this->category = $category;
+        $this->img_path = $img_path;
     }
 
     public function get_id_comics()
@@ -36,9 +36,9 @@ class Comics
         return $this->created_at;
     }
 
-    public function get_category()
+    public function get_img()
     {
-        return $this->category;
+        return $this->img_path;
     }
 }
 
@@ -65,10 +65,10 @@ class ComicsManager
     public function display_comics()
     {
         foreach ($this->comics as $comics) {
+            echo '<img src :' . $comics->get_img() . ' >';
             echo "ID: " . $comics->get_id_comics() . '<br>';
             echo "Title: " . $comics->get_title_comics() . '<br>';
             echo "Author: " . $comics->get_author() . '<br>';
-            echo "Category: " . $comics->get_category() . '<br>';
             echo "Created At: " . $comics->get_created_at() . '<br>';
             echo "<hr>";
         }
@@ -111,3 +111,4 @@ class Chapter
 }
 
 ?>
+
