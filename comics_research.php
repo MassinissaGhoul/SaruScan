@@ -1,29 +1,38 @@
 <?php
-session_start();
-include_once("./header.php");
-if (isset($_GET["research"])) {
-    $research = $_GET["research"];
-} else {
-    echo "Aucune recherche effectuée.";
-    exit(); // Sortir si aucune recherche n'est fournie
+require_once 'header.php';
+require_once 'comics.php'; // Inclusion des classes
+
+// Récupération des comics dans la base de données
+$comicsManager = new ComicsManager();
+$query = $bdd->query("SELECT * FROM comics");
+
+while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['category']);
+    $comicsManager->add_comics($comics);
 }
+
+// Récupération du terme de recherche depuis le formulaire
+$search = isset($_GET['research']) ? $_GET['research'] : '';
+
 ?>
 
-<body>
-    <?php
-        //recherche les comics
-        $research_req = $bdd->prepare('SELECT * from comics WHERE title_comics LIKE :r');
-        $research_req->execute(["r" => "%". $research. "%"]);
-        if ($research_req->rowCount() == 0) {
-            echo("<div class='middle'> Aucun résultat </div><br>");
+<?php
+// Si un terme de recherche est présent
+if (!empty($search)) {
+    // Recherche dans les objets comics
+    $results = $comicsManager->search_comics($search);
+
+    // Affichage des résultats de la recherche
+    if (!empty($results)) {
+        echo "<h2>Résultats de recherche :</h2>";
+        foreach ($results as $comics) {
+            echo "Titre : " . $comics->get_title_comics() . "<br>";
+            echo "Auteur : " . $comics->get_author() . "<br>";
+            echo "Catégorie : " . $comics->get_category() . "<br><br>";
         }
-        $research = $research_req->fetchAll();
-        //affichage des résultats
-        foreach ($research as $r) {
-            echo("<div>");
-            echo($r["title_comics"] . " de " . $r["author"]);
-            echo("</div>");
-        }
-    ?>
-</body>
-</html>
+    } else {
+        echo "Aucun résultat trouvé pour '$search'.";
+    }
+}
+
+?>

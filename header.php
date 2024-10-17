@@ -24,7 +24,7 @@ die('Erreur : ' . $e->getMessage());
 </header>
 
 <?php 
-    if (isset($_GET["research"]) && basename($_SERVER['PHP_SELF']) != 'research.php') {
+    if (isset($_GET["research"]) && basename($_SERVER['PHP_SELF']) != 'comics_research.php') {
         header("Location: comics_research.php?research=". $_GET["research"]);
     }
 ?>

@@ -61,7 +61,7 @@ class ComicsManager
     {
         return $this->comics;
     }
-
+    
     public function display_comics()
     {
         foreach ($this->comics as $comics) {
@@ -72,6 +72,18 @@ class ComicsManager
             echo "Created At: " . $comics->get_created_at() . '<br>';
             echo "<hr>";
         }
+    }
+    public function search_comics($search)
+    {
+        $results = [];
+
+        foreach ($this->comics as $comics) {
+            if (stripos($comics->get_title_comics(), $search) !== false) {
+                $results[] = $comics;
+            }
+        }
+
+        return $results;
     }
 }
 
