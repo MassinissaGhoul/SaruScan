@@ -1,30 +1,10 @@
 <?php
 session_start();
-include_once("./header.php");
+include_once("header.php");
 ?>
 
 
 <body class="body_container">
-
-  <!-- Header -->
-  <header class="header_container">
-    <div>
-      <nav>
-        <a href="comics.php">Comics</a>
-        <a href="category.php">Category</a>
-        <a href="favorite.php">Favorite</a>
-        <a href="signin.php">Sign in</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Search Bar -->
-  <div class="search_container">
-    <form action="" method="get">
-      <label for="research"></label>
-      <input type="text" name="research" id="research" placeholder="Search Comics...">
-    </form>
-  </div>
 
   <!-- Main -->
   <main class="main_container">
