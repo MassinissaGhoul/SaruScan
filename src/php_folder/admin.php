@@ -31,17 +31,6 @@ class ComicsManager
         }
     }
 
-    public function search_comics($search)
-    {
-        $results = [];
-        foreach ($this->comics as $comics) {
-            if (stripos($comics->get_title_comics(), $search) !== false) {
-                $results[] = $comics;
-            }
-        }
-        return $results;
-    }
-
     // Method to add a comic to the database
     public function addComicsToDB($title_comics, $author, $category, $created_at)
     {
