@@ -84,7 +84,7 @@ class ComicsManager
         }
 
         return $results;
-    }
+    }<
 }
 
 class Chapter
@@ -107,8 +107,73 @@ class Chapter
         $this->created_at = $created_at;
         $this->page_number = $page_number;
     }
+
+    public function get_id_chapter()
+    {
+        return $this->id_chapter;
+    }
+
+    public function get_title_chapter()
+    {
+        return $this->title_chapter;
+    }
+
+    public function get_id_comics()
+    {
+        return $this->id_comics;
+    }
+
+    public function get_view_count()
+    {
+        return $this->view_count;
+    }
+
+    public function get_comics_path()
+    {
+        return $this->comics_path;
+    }
+
+    public function get_created_at()
+    {
+        return $this->created_at;
+    }
+
+    public function get_page_number()
+    {
+        return $this->page_number;
+    }
+
+
+    function addChapterPagesToJson($chapterId, $pagesArray) {
+        $jsonFilePath = 'chapter_pages.json';
     
+        $jsonData = [];
+        if (file_exists($jsonFilePath)) {
+            $jsonContent = file_get_contents($jsonFilePath);
+            $jsonData = json_decode($jsonContent, true);
+        }
+    
+        $jsonData[$chapterId] = $pagesArray;
+    
+        file_put_contents($jsonFilePath, json_encode($jsonData));
+    }
+    function getChapterPagesFromJson($chapterId) {
+        $jsonFilePath = 'chapter_pages.json';
+    
+        if (file_exists($jsonFilePath)) {
+            $jsonContent = file_get_contents($jsonFilePath);
+            $jsonData = json_decode($jsonContent, true);
+    
+            if (isset($jsonData[$chapterId])) {
+                return $jsonData[$chapterId];
+            }
+        }
+        return null;
+    }    
+
+
+
 }
 
-?>
 
+?>
