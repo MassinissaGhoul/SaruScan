@@ -8,7 +8,8 @@ $query = $bdd->query("SELECT * FROM comics ");
 
 
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['image_path']);
+    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['create_at'], $row['image_path']);
+    $comics->comics_category($comics->get_id_comics());
     $comicsManager->add_comics($comics);
 }
 
@@ -30,6 +31,7 @@ if (!empty($search)) {
             echo '<img src ="' . $comics->get_img() . '" width="200px">';
             echo "Titre : " . $comics->get_title_comics() . "<br>";
             echo "Auteur : " . $comics->get_author() . "<br>";
+            echo "category : " .$comics->category_to_string() . "<br>";
         }
     } else {
         echo "Aucun résultat trouvé pour '$search'.";

@@ -1,9 +1,15 @@
+<?php 
+include_once("header.php");
+?>
+
 <?php
+
 class Comics
 {
     private $id_comics;
     private $title_comics;
     private $author;
+    private $category;
     private $created_at;
     private $img_path;
 
@@ -31,6 +37,16 @@ class Comics
         return $this->author;
     }
 
+    public function get_category()
+    {
+        return $this->category;
+    }
+
+    public function category_to_string()
+    {
+        return implode(" ", $this->category);
+    }
+
     public function get_created_at()
     {
         return $this->created_at;
@@ -39,6 +55,20 @@ class Comics
     public function get_img()
     {
         return $this->img_path;
+    }
+
+    public function comics_category($id_comics)
+    {
+        global $bdd;
+        $category_liste = [];
+        $category_req = $bdd->prepare("SELECT category FROM category WHERE id_comics = :c");
+        $category_req->execute([':c' => $id_comics]);
+
+        while ($category_comics = $category_req->fetch(PDO::FETCH_ASSOC)) {
+            $category_liste[] = $category_comics['category'];
+        }
+
+        $this->category = $category_liste;
     }
 }
 
@@ -69,6 +99,7 @@ class ComicsManager
             echo "ID: " . $comics->get_id_comics() . '<br>';
             echo "Title: " . $comics->get_title_comics() . '<br>';
             echo "Author: " . $comics->get_author() . '<br>';
+            echo "category: " . $comics->get_category() . '<br>';
             echo "Created At: " . $comics->get_created_at() . '<br>';
             echo "<hr>";
         }
@@ -84,7 +115,7 @@ class ComicsManager
         }
 
         return $results;
-    }<
+    }
 }
 
 class Chapter
@@ -144,6 +175,7 @@ class Chapter
     }
 
 
+
     function addChapterPagesToJson($chapterId, $pagesArray) {
         $jsonFilePath = 'chapter_pages.json';
     
@@ -170,9 +202,6 @@ class Chapter
         }
         return null;
     }    
-
-
-
 }
 
 
