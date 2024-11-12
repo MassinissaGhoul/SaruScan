@@ -36,7 +36,7 @@ $id_chapter = 1;
 $title_chapter = "Chapitre 1";
 $id_comics = 1;
 $view_count = 0;
-$comics_path = 'comics/Dr.Stone/Chapter01'; 
+$comics_path = 'comics/Dr.Stone/Chapter02'; 
 $created_at = date('Y-m-d');
 $page_number = 1;
 
