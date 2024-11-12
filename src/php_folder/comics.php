@@ -175,33 +175,37 @@ class Chapter
     }
 
 
-
     function addChapterPagesToJson($chapterId, $pagesArray) {
         $jsonFilePath = 'chapter_pages.json';
-    
+
+        // Récupère le contenu existant du fichier JSON, s'il existe
         $jsonData = [];
         if (file_exists($jsonFilePath)) {
             $jsonContent = file_get_contents($jsonFilePath);
             $jsonData = json_decode($jsonContent, true);
         }
-    
+
+        // Met à jour les données avec le nouvel ID de chapitre et ses pages
         $jsonData[$chapterId] = $pagesArray;
-    
-        file_put_contents($jsonFilePath, json_encode($jsonData));
+
+        // Écrit dans le fichier JSON en utilisant JSON_PRETTY_PRINT pour formatage lisible
+        file_put_contents($jsonFilePath, json_encode($jsonData, JSON_PRETTY_PRINT));
     }
+
+    // Récupère les pages d'un chapitre depuis le fichier JSON
     function getChapterPagesFromJson($chapterId) {
         $jsonFilePath = 'chapter_pages.json';
-    
+
         if (file_exists($jsonFilePath)) {
             $jsonContent = file_get_contents($jsonFilePath);
             $jsonData = json_decode($jsonContent, true);
-    
+
             if (isset($jsonData[$chapterId])) {
                 return $jsonData[$chapterId];
             }
         }
         return null;
-    }    
+    }
 }
 
 
