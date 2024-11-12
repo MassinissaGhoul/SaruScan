@@ -86,7 +86,6 @@ if ($chapterPages) {
     }
 
     function showPage(pageIndex) {
-        // Assurez-vous que l'index est valide
         if (pageIndex >= 0 && pageIndex < totalPages) {
             pages[currentPage].style.display = 'none'; 
             pages[pageIndex].style.display = 'block'; 
@@ -96,13 +95,13 @@ if ($chapterPages) {
 
     chapterContainer.addEventListener('click', (event) => {
         const pageWidth = pages[currentPage].offsetWidth;
-        const clickPosition = event.clientX; // Position X du clic
+        const clickPosition = event.clientX; 
 
         if (clickPosition < pageWidth / 2) {
-            const nextPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1; // Gérer le cas du début du chapitre
+            const nextPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1; 
             showPage(nextPage);
         } else {
-            const nextPage = (currentPage + 1) % totalPages; // Boucle entre les pages
+            const nextPage = (currentPage + 1) % totalPages; 
             showPage(nextPage);
         }
     });
