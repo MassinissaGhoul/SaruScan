@@ -36,7 +36,7 @@ $id_chapter = 1;
 $title_chapter = "Chapitre 1";
 $id_comics = 1;
 $view_count = 0;
-$comics_path = 'comics/Dr.Stone/Chapter02'; 
+$comics_path = 'comics/Dr.Stone/Chapter01'; 
 $created_at = date('Y-m-d');
 $page_number = 1;
 
@@ -66,7 +66,7 @@ $chapterPages = $chapter->getChapterPagesFromJson($id_chapter);
 if ($chapterPages) {
     echo "<div id='chapter-pages'>";
     foreach ($chapterPages as $index => $pagePath) {
-        echo "<img src='$pagePath' style='display: none;' id='page-$index' class='chapter-page'>";
+        echo "<img src='$pagePath' style='display: none; max-width: 600px; max-height: 800px;' id='page-$index' class='chapter-page'>";
     }
     echo "</div>";
 } else {
@@ -78,13 +78,32 @@ if ($chapterPages) {
 <script>
     let currentPage = 0;
     const pages = document.querySelectorAll('.chapter-page');
+    const totalPages = pages.length;
+    const chapterContainer = document.getElementById('chapter-pages');
+
     if (pages.length > 0) {
         pages[currentPage].style.display = 'block';
     }
 
-    document.addEventListener('click', () => {
-        pages[currentPage].style.display = 'none';
-        currentPage = (currentPage + 1) % pages.length;
-        pages[currentPage].style.display = 'block';
+    function showPage(pageIndex) {
+        // Assurez-vous que l'index est valide
+        if (pageIndex >= 0 && pageIndex < totalPages) {
+            pages[currentPage].style.display = 'none'; 
+            pages[pageIndex].style.display = 'block'; 
+            currentPage = pageIndex;
+        }
+    }
+
+    chapterContainer.addEventListener('click', (event) => {
+        const pageWidth = pages[currentPage].offsetWidth;
+        const clickPosition = event.clientX; // Position X du clic
+
+        if (clickPosition < pageWidth / 2) {
+            const nextPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1; // Gérer le cas du début du chapitre
+            showPage(nextPage);
+        } else {
+            const nextPage = (currentPage + 1) % totalPages; // Boucle entre les pages
+            showPage(nextPage);
+        }
     });
 </script>
