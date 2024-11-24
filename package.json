@@ -4,16 +4,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "all": "tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+    "all": "tailwindcss -i ./src/input.css -o ./src/style.css --watch"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "tailwindcss": "^3.4.15"
-  },
-  "dependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49"
   }
 }
