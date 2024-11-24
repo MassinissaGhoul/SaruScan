@@ -1,177 +1,288 @@
 <?php
-session_start();
 include_once("header.php");
 ?>
 
+<body class="bg-gray-900 text-gray-300">
 
-<body class="body_container bg-slate-400">
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
 
-  <!-- Main -->
-  <main class="main_container">
+    <!-- Recommendations and Popular Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-    <!-- Section Recommendations and Popular -->
-    <section class="reco-populaire_container">
-      <div class="reco-popular-left">
-
-        <!-- Carousel for Recommendations -->
-        <div class="recommendation_carousel">
-          <img src="source" alt="Comic Image">
-          <div class="comic_info">
-            <div class="comic_rating">
-              <span class="stars">⭐⭐⭐⭐⭐</span>
-              <span class="rating_value">9.9</span>
+      <!-- Recommendations (Carousel) -->
+      <div>
+        <div class="bg-gray-800 rounded shadow-lg overflow-hidden">
+          <img src="../imgs/maki.png" alt="Comic Image" class="w-full">
+          <div class="p-4">
+            <div class="flex items-center justify-between text-yellow-400">
+              <span>⭐⭐⭐⭐⭐</span>
+              <span>9.9</span>
             </div>
-            <div class="comic_title">
-              <h3>Manhwa</h3>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-            </div>
+            <h3 class="text-xl font-bold mt-2">Manhwa</h3>
+            <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
           </div>
         </div>
-
-        <!-- Carousel Navigation (Left and Right buttons) -->
-        <div class="carousel_nav">
-          <button class="carousel_left">←</button>
-          <button class="carousel_right">→</button>
+        <div class="flex justify-between mt-4">
+          <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">←</button>
+          <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">→</button>
         </div>
       </div>
 
-      <div class="reco-popular-right">
-
-        <!-- Popular Comics -->
-        <div class="popular_comics">
-          <div class="popular_nav">
-            <button class="weekly">Weekly</button>
-            <button class="monthly">Monthly</button>
-            <button class="all">All</button>
+      <!-- Popular Comics -->
+      <div>
+        <div class="bg-gray-800 rounded shadow-lg p-4">
+          <div class="flex justify-between mb-4">
+            <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Weekly</button>
+            <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Monthly</button>
+            <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">All</button>
           </div>
 
-          <!-- Comics Grid -->
-          <div class="comics_grid">
-            <div class="comic_item">
-              <span class="rank">#1</span>
-              <img src="source" alt="Comic Image">
-              <div class="comic_details">
-                <h4>Manga's Name</h4>
-                <div class="comic_rating">
-                  <span class="stars">⭐⭐⭐⭐⭐</span>
-                  <span class="rating_value">9.9</span>
-                </div>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-400">#1</span>
+              <img src="../imgs/runcandel.jpg" alt="Comic" class="w-12 h-12 rounded">
+              <div>
+                <h4 class="font-semibold">Manga's Name</h4>
+                <div class="text-yellow-400">⭐⭐⭐⭐⭐ <span class="text-sm">9.9</span></div>
+              </div>
+            </div>
+            <!-- Repeat items -->
+
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-400">#2</span>
+              <img src="../imgs/naruto.jpg" alt="Comic" class="w-12 h-12 rounded">
+              <div>
+                <h4 class="font-semibold">Manga's Name</h4>
+                <div class="text-yellow-400">⭐⭐⭐⭐⭐ <span class="text-sm">9.9</span></div>
               </div>
             </div>
 
-            <div class="comic_item">
-              <span class="rank">#2</span>
-              <img src="source" alt="Comic Image">
-              <div class="comic_details">
-                <h4>Manga's Name 2</h4>
-                <div class="comic_rating">
-                  <span class="stars">⭐⭐⭐⭐⭐</span>
-                  <span class="rating_value">9.9</span>
-                </div>
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-400">#3</span>
+              <img src="../imgs/chainsow.jpg" alt="Comic" class="w-12 h-12 rounded">
+              <div>
+                <h4 class="font-semibold">Manga's Name</h4>
+                <div class="text-yellow-400">⭐⭐⭐⭐⭐ <span class="text-sm">9.9</span></div>
               </div>
             </div>
 
-            <div class="comic_item">
-              <span class="rank">#3</span>
-              <img src="source" alt="Comic Image">
-              <div class="comic_details">
-                <h4>Manga's Name 3</h4>
-                <div class="comic_rating">
-                  <span class="stars">⭐⭐⭐⭐⭐</span>
-                  <span class="rating_value">9.9</span>
-                </div>
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-400">#4</span>
+              <img src="../imgs/Llyod.jpg" alt="Comic" class="w-12 h-12 rounded">
+              <div>
+                <h4 class="font-semibold">Manga's Name</h4>
+                <div class="text-yellow-400">⭐⭐⭐⭐⭐ <span class="text-sm">9.9</span></div>
               </div>
             </div>
-            <!-- à rajouter -->
+
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-400">#5</span>
+              <img src="../imgs/one_piece.jpg" alt="Comic" class="w-12 h-12 rounded">
+              <div>
+                <h4 class="font-semibold">Manga's Name</h4>
+                <div class="text-yellow-400">⭐⭐⭐⭐⭐ <span class="text-sm">9.9</span></div>
+              </div>
+            </div>
+
+
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- All Comics -->
-    <section class="all_comics_container">
-      <div class="comics_grid">
-        <div class="comic_item">
-          <img src="source" alt="Comic Image">
-          <div class="comic_info">
-            <h3>Swordmaster's Youngest Son</h3>
-            <span class="comic_type">Manhwa</span>
-            <div class="comic_rating">
-              <span class="stars">⭐⭐⭐⭐⭐</span>
-              <span class="rating_value">9.9</span>
-            </div>
-            <div class="comic_chapters">
-              <p>Chapter 133 - 23 hours ago</p>
-              <p>Chapter 132 - 2 days ago</p>
-              <p>Chapter 131 - 3 days ago</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="comic_item">
-          <img src="source" alt="Comic Image">
-          <div class="comic_info">
-            <h3>Chainsaw Man</h3>
-            <span class="comic_type">Manhwa</span>
-            <div class="comic_rating">
-              <span class="stars">⭐⭐⭐⭐⭐</span>
-              <span class="rating_value">9.9</span>
-            </div>
-            <div class="comic_chapters">
-              <p>Chapter 133 - 23 hours ago</p>
-              <p>Chapter 132 - 2 days ago</p>
-              <p>Chapter 131 - 3 days ago</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="comic_item">
-          <img src="source" alt="Comic Image">
-          <div class="comic_info">
-            <h3>Naruto</h3>
-            <span class="comic_type">Manhwa</span>
-            <div class="comic_rating">
-              <span class="stars">⭐⭐⭐⭐⭐</span>
-              <span class="rating_value">9.9</span>
-            </div>
-            <div class="comic_chapters">
-              <p>Chapter 133 - 23 hours ago</p>
-              <p>Chapter 132 - 2 days ago</p>
-              <p>Chapter 131 - 3 days ago</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="comic_item">
-          <img src="source" alt="Comic Image">
-          <div class="comic_info">
-            <h3>Dbz</h3>
-            <span class="comic_type">Manhwa</span>
-            <div class="comic_rating">
-              <span class="stars">⭐⭐⭐⭐⭐</span>
-              <span class="rating_value">9.9</span>
-            </div>
-            <div class="comic_chapters">
-              <p>Chapter 133 - 23 hours ago</p>
-              <p>Chapter 132 - 2 days ago</p>
-              <p>Chapter 131 - 3 days ago</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- à rajouter -->
       </div>
     </section>
 
+    <!-- All Comics Section -->
+    <section class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+      <!-- Comic Item -->
+      <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden">
+        <!-- Image -->
+        <div class="w-2/5">
+          <img src="../imgs/runcandel.jpg" alt="Comic Image" class="comic-image h-full w-full object-cover">
+        </div>
+
+        <!-- Details -->
+        <div class="w-3/5 p-6 flex flex-col justify-between">
+          <!-- Titre, Étiquette et Étoiles -->
+          <div>
+            <h3 class="text-xl font-bold text-white mb-3">Swordmaster's Youngest Son</h3>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
+              <div class="flex items-center space-x-1 text-yellow-400">
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-gray-300 text-sm">(9.9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Derniers Chapitres -->
+          <div class="chapter-list">
+            <div class="chapter-item">
+              <span class="font-semibold text-white">Chapter 133</span>
+              <span class="text-gray-400 text-sm">23 hours ago</span>
+            </div>
+            <div class="chapter-item">
+              <span class="font-semibold text-white">Chapter 132</span>
+              <span class="text-gray-400 text-sm">2 days ago</span>
+            </div>
+            <div class="chapter-item">
+              <span class="font-semibold text-white">Chapter 131</span>
+              <span class="text-gray-400 text-sm">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+      <!-- Derniers Chapitres -->
+      <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden h-64">
+        <!-- Image -->
+        <div class="w-2/5">
+          <img src="../imgs/naruto.jpg" alt="Comic Image" class="comic-image h-full w-full object-cover">
+        </div>
+
+        <!-- Details -->
+        <div class="w-3/5 p-6 flex flex-col justify-between">
+          <!-- Titre, Étiquette et Étoiles -->
+          <div>
+            <h3 class="text-xl font-bold text-white mb-3">Swordmaster's Youngest Son</h3>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
+              <div class="flex items-center space-x-1 text-yellow-400">
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-gray-300 text-sm">(9.9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Derniers Chapitres -->
+          <div class="chapter-list">
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 133</span>
+              <span class="text-gray-400 text-sm">23 hours ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 132</span>
+              <span class="text-gray-400 text-sm">2 days ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300">
+              <span class="font-semibold text-white">Chapter 131</span>
+              <span class="text-gray-400 text-sm">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden h-64">
+        <!-- Image -->
+        <div class="w-2/5">
+          <img src="../imgs/maki.png" alt="Comic Image" class="comic-image h-full w-full object-cover">
+        </div>
+
+        <!-- Details -->
+        <div class="w-3/5 p-6 flex flex-col justify-between">
+          <!-- Titre, Étiquette et Étoiles -->
+          <div>
+            <h3 class="text-xl font-bold text-white mb-3">Swordmaster's Youngest Son</h3>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
+              <div class="flex items-center space-x-1 text-yellow-400">
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-gray-300 text-sm">(9.9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Derniers Chapitres -->
+          <div class="chapter-list">
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 133</span>
+              <span class="text-gray-400 text-sm">23 hours ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 132</span>
+              <span class="text-gray-400 text-sm">2 days ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300">
+              <span class="font-semibold text-white">Chapter 131</span>
+              <span class="text-gray-400 text-sm">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden h-64">
+        <!-- Image -->
+        <div class="w-2/5">
+          <img src="../imgs/Llyod.jpg" alt="Comic Image" class="comic-image h-full w-full object-cover">
+        </div>
+
+        <!-- Details -->
+        <div class="w-3/5 p-6 flex flex-col justify-between">
+          <!-- Titre, Étiquette et Étoiles -->
+          <div>
+            <h3 class="text-xl font-bold text-white mb-3">Swordmaster's Youngest Son</h3>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
+              <div class="flex items-center space-x-1 text-yellow-400">
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-base">★</span>
+                <span class="text-gray-300 text-sm">(9.9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Derniers Chapitres -->
+          <div class="chapter-list">
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 133</span>
+              <span class="text-gray-400 text-sm">23 hours ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+              <span class="font-semibold text-white">Chapter 132</span>
+              <span class="text-gray-400 text-sm">2 days ago</span>
+            </div>
+            <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300">
+              <span class="font-semibold text-white">Chapter 131</span>
+              <span class="text-gray-400 text-sm">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+    </section>
   </main>
 
   <!-- Footer -->
-  <footer>
-    <div class="footer_animation">
-      <p>Animation de nos noms de gauche à droite en mode add</p>
-    </div>
+  <footer class="bg-gray-800 text-center text-gray-400 py-4">
+    <p class="animate-scroll">Animation de nos noms de gauche à droite en mode add</p>
   </footer>
-
 </body>
-
-</html>

@@ -1,5 +1,7 @@
-<?php try {
-    $bdd = new PDO('mysql:host=localhost;dbname=saruscan;charset=utf8', 'root', '', [PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION]);
+<?php
+session_start();
+try {
+    $bdd = new PDO('mysql:host=localhost;dbname=saruscan;charset=utf8', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 } catch (Exception $e) {
     die('Erreur : ' . $e->getMessage());
 }
@@ -12,29 +14,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../output.css">
+    <link rel="stylesheet" href="../input.css">
+    <title>SaruScan</title>
 </head>
-<!-- Header -->
-<header class="header_container">
-    <div>
-        <nav>
-            <a href="comics.php">Comics</a>
-            <a href="category.php">Category</a>
-            <a href="favorite.php">Favorite</a>
-            <a href="signin.php">Sign in</a>
-        </nav>
+
+<body class="bg-gray-900 text-gray-300">
+
+    <header class="bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <nav class="flex justify-between items-center">
+                <!-- Left - Navigation Links -->
+                <div class="flex space-x-4">
+                    <a href="homepage.php" class="hover:text-blue-400 transition">Home</a>
+                    <a href="comics.php" class="hover:text-blue-400 transition">Comics</a>
+                    <a href="category.php" class="hover:text-blue-400 transition">Category</a>
+                    <a href="favorite.php" class="hover:text-blue-400 transition">Favorite</a>
+                </div>
+
+                <!-- Right - User Options -->
+                <div class="space-x-4">
+                    <?php if (isset($_SESSION['user'])): ?>
+                        <span>Bienvenue, <strong><?php echo htmlspecialchars($_SESSION['user']['username']); ?></strong></span>
+                        <a href="logout.php" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded text-sm">Log out</a>
+                    <?php else: ?>
+                        <a href="login.php" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm">Sign in</a>
+                    <?php endif; ?>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="bg-gray-700 py-4">
+        <div class="container mx-auto">
+            <form action="" method="get" class="flex justify-center">
+                <input type="text" name="research" id="research" class="w-1/2 px-4 py-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:border-blue-400 text-gray-200 placeholder-gray-400" placeholder="Search Comics...">
+                <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white">Search</button>
+            </form>
+        </div>
     </div>
-</header>
 
-<!-- Search Bar -->
-<div class="search_container">
-    <form action="" method="get">
-        <label for="research"> research the name of the comic</label>
-        <input type="text" name="research" id="research" placeholder="Search Comics...">
-    </form>
-</div>
-
-<?php
-if (isset($_GET["research"]) && basename($_SERVER['PHP_SELF']) != 'comics_research.php') {
-    header("Location: comics_research.php?research=" . $_GET["research"]);
-}
-?>
+    <?php
+    if (isset($_GET["research"]) && basename($_SERVER['PHP_SELF']) != 'comics_research.php') {
+        header("Location: comics_research.php?research=" . urlencode($_GET["research"]));
+        exit();
+    }
+    ?>
