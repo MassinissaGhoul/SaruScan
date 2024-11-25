@@ -1,6 +1,7 @@
 <?php
-require_once 'comics.php'; 
+require_once 'comics.php';
 
+// Configuration de la base de données
 $host = 'localhost'; 
 $db = 'saruscan'; 
 $user = 'root'; 
@@ -8,7 +9,6 @@ $pass = '';
 $charset = 'utf8mb4'; 
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -22,87 +22,118 @@ try {
     throw new PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$comicsManager = new ComicsManager(); 
-$query = $pdo->query("SELECT * FROM comics");
-
-while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['category']);
-    $comicsManager->add_comics($comics);
+// Gérer la sélection du chapitre
+if (isset($_GET['chapter_path'])) {
+    $_SESSION['comics_path'] = $_GET['chapter_path'];
 }
 
-$comicsManager->display_comics();
-
-$id_chapter = 1;
-$title_chapter = "Chapitre 1";
-$id_comics = 1;
-$view_count = 0;
-$comics_path = 'comics/Dr.Stone/Chapter01'; 
-$created_at = date('Y-m-d');
-$page_number = 1;
-
-$chapter = new Chapter($id_chapter, $title_chapter, $id_comics, $view_count, $comics_path, $created_at, $page_number);
-
-$pagesArray = [];
-if (is_dir($comics_path)) {
-    echo "Dossier trouvé : $comics_path<br>";
-    $files = scandir($comics_path);
-    foreach ($files as $file) {
-        if (is_file($comics_path . '/' . $file)) {
-            $pagesArray[] = $comics_path . '/' . $file;
-        }
-    }
-    if (!empty($pagesArray)) {
-        $chapter->addChapterPagesToJson($id_chapter, $pagesArray);
-        echo "Pages ajoutées au JSON.<br>";
-    } else {
-        echo "Aucune page trouvée dans le dossier.<br>";
-    }
+// Récupérer le chemin du chapitre sélectionné
+if (isset($_SESSION['comics_path'])) {
+    $comics_path = $_SESSION['comics_path'];
 } else {
-    echo "Dossier introuvable : $comics_path<br>";
+    $comics_path = null;
 }
 
-$chapterPages = $chapter->getChapterPagesFromJson($id_chapter);
-
-if ($chapterPages) {
-    echo "<div id='chapter-pages'>";
-    foreach ($chapterPages as $index => $pagePath) {
-        echo "<img src='$pagePath' style='display: none; max-width: 600px; max-height: 800px;' id='page-$index' class='chapter-page'>";
-    }
-    echo "</div>";
-} else {
-    echo "Aucune page trouvée dans le JSON pour le chapitre ID $id_chapter.<br>";
-}
+// Charger la liste des chapitres pour le menu déroulant
+$chaptersQuery = $pdo->query("SELECT id_chapter, title_chapter, comics_path FROM chapter ORDER BY id_chapter ASC");
+$chapters = $chaptersQuery->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaruScan</title>
+</head>
+<body>
+    <h1>Choisissez un chapitre</h1>
 
-<script>
-    let currentPage = 0;
-    const pages = document.querySelectorAll('.chapter-page');
-    const totalPages = pages.length;
-    const chapterContainer = document.getElementById('chapter-pages');
+    <!-- Menu déroulant pour choisir un chapitre -->
+    <form method="GET" action="">
+        <select name="chapter_path" onchange="this.form.submit()">
+            <option value="">-- Sélectionner un chapitre --</option>
+            <?php foreach ($chapters as $chapter): ?>
+                <option value="<?php echo htmlspecialchars($chapter['comics_path']); ?>" 
+                    <?php echo ($comics_path === $chapter['comics_path']) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($chapter['title_chapter']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </form>
 
-    if (pages.length > 0) {
-        pages[currentPage].style.display = 'block';
-    }
+    <?php if ($comics_path): ?>
+        <h2>Pages du chapitre : <?php echo htmlspecialchars($comics_path); ?></h2>
 
-    function showPage(pageIndex) {
-        if (pageIndex >= 0 && pageIndex < totalPages) {
-            pages[currentPage].style.display = 'none'; 
-            pages[pageIndex].style.display = 'block'; 
-            currentPage = pageIndex;
+        <?php
+        // Charger les pages du chapitre sélectionné
+        $pagesArray = [];
+        if (is_dir($comics_path)) {
+            $files = scandir($comics_path);
+            foreach ($files as $file) {
+                if (is_file($comics_path . '/' . $file)) {
+                    $pagesArray[] = $comics_path . '/' . $file;
+                }
+            }
         }
-    }
+        ?>
 
-    chapterContainer.addEventListener('click', (event) => {
-        const pageWidth = pages[currentPage].offsetWidth;
-        const clickPosition = event.clientX; 
+        <div id="chapter-pages">
+            <?php foreach ($pagesArray as $index => $pagePath): ?>
+                <img src="<?php echo $pagePath; ?>" style="display: none; max-width: 600px; max-height: 800px;" id="page-<?php echo $index; ?>" class="chapter-page">
+            <?php endforeach; ?>
+        </div>
 
-        if (clickPosition < pageWidth / 2) {
-            const nextPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1; 
-            showPage(nextPage);
-        } else {
-            const nextPage = (currentPage + 1) % totalPages; 
-            showPage(nextPage);
-        }
-    });
-</script>
+        <script>
+            let currentPage = 0;
+            const pages = document.querySelectorAll('.chapter-page');
+            const totalPages = pages.length;
+
+            if (pages.length > 0) {
+                pages[currentPage].style.display = 'block';
+            }
+
+            function showPage(pageIndex) {
+                if (pageIndex >= 0 && pageIndex < totalPages) {
+                    pages[currentPage].style.display = 'none';
+                    pages[pageIndex].style.display = 'block';
+                    currentPage = pageIndex;
+                }
+            }
+
+            async function updateChapterPath(newPath) {
+                const response = await fetch('update_comics_path.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ new_comics_path: newPath })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    location.reload(); // Recharge la page pour afficher le nouveau chapitre
+                } else {
+                    console.error('Erreur lors de la mise à jour du chemin :', result.error);
+                }
+            }
+
+            document.getElementById('chapter-pages').addEventListener('click', (event) => {
+                const pageWidth = pages[currentPage].offsetWidth;
+                const clickPosition = event.clientX;
+
+                if (currentPage === totalPages - 1) {
+                    // Fin du chapitre, passer au chapitre suivant
+                    alert('Fin du chapitre ! Choisissez un autre chapitre.');
+                }
+
+                if (clickPosition < pageWidth / 2) {
+                    const prevPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1;
+                    showPage(prevPage);
+                } else {
+                    const nextPage = (currentPage + 1) % totalPages;
+                    showPage(nextPage);
+                }
+            });
+        </script>
+    <?php endif; ?>
+</body>
+</html>
