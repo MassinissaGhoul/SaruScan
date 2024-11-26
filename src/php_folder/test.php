@@ -26,10 +26,8 @@ if (isset($_GET['manga_id'])) {
     $_SESSION['manga_id'] = $_GET['manga_id'];
 }
 
-
 // Définir le manga sélectionné
 $manga_id = $_SESSION['manga_id'] ?? null;
-echo "id  = " . $manga_id;
 
 // Charger la liste des mangas pour le menu déroulant
 $mangasQuery = $pdo->query("SELECT id_comics, title_comics FROM comics ORDER BY title_comics ASC");
@@ -42,8 +40,6 @@ if (isset($_GET['chapter_path'])) {
 
 // Définir le chapitre sélectionné
 $chapter_path = $_SESSION['chapter_path'] ?? null;
-
-
 
 // Charger les chapitres du manga sélectionné
 $chapters = [];
@@ -99,6 +95,7 @@ if ($manga_id) {
         <h2>Pages du chapitre : <?php echo htmlspecialchars($chapter_path); ?></h2>
 
         <?php
+        // Charger les pages du chapitre sélectionné
         $pagesArray = [];
         if (is_dir($chapter_path)) {
             $files = scandir($chapter_path);
@@ -130,6 +127,22 @@ if ($manga_id) {
                     pages[currentPage].style.display = 'none';
                     pages[pageIndex].style.display = 'block';
                     currentPage = pageIndex;
+                } else if (pageIndex >= totalPages) {
+                    loadNextChapter();
+                }
+            }
+
+            function loadNextChapter() {
+                const currentChapterPath = new URLSearchParams(window.location.search).get('chapter_path');
+                const chapterOptions = Array.from(document.querySelectorAll('#chapter_path option'));
+                const currentIndex = chapterOptions.findIndex(option => option.value === currentChapterPath);
+                const nextOption = chapterOptions[currentIndex + 1];
+
+                if (nextOption) {
+                    // Rediriger vers le chapitre suivant
+                    window.location.href = `?chapter_path=${nextOption.value}&manga_id=<?php echo $manga_id; ?>`;
+                } else {
+                    alert('Fin des chapitres !');
                 }
             }
 
@@ -137,15 +150,11 @@ if ($manga_id) {
                 const pageWidth = pages[currentPage].offsetWidth;
                 const clickPosition = event.clientX;
 
-                if (currentPage === totalPages - 1) {
-                    alert('Fin du chapitre ! Choisissez un autre chapitre.');
-                }
-
                 if (clickPosition < pageWidth / 2) {
-                    const prevPage = currentPage - 1 >= 0 ? currentPage - 1 : totalPages - 1;
+                    const prevPage = currentPage - 1 >= 0 ? currentPage - 1 : 0;
                     showPage(prevPage);
                 } else {
-                    const nextPage = (currentPage + 1) % totalPages;
+                    const nextPage = currentPage + 1;
                     showPage(nextPage);
                 }
             });
