@@ -31,10 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comic'])) {
     $title_comics = $_POST['comic'] ?? '';
     $author = $_POST['author'] ?? '';
     $category = $_POST['category'] ?? '';
+    $image_path = $_POST['image_path'] ?? '/src/img/default.jpg'; // Valeur par défaut si aucun chemin n'est fourni
     $created_at = date('Y-m-d');
 
     if (!empty($title_comics) && !empty($author) && !empty($category)) {
-        $comicsManager->addComicsToDB($title_comics, $author, $category, $created_at);
+        $comicsManager->addComicsToDB($title_comics, $author, $category, $image_path, $created_at);
     } else {
         echo "Tous les champs sont requis pour ajouter un comic.<br>";
     }
@@ -82,6 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_chapter'])) {
 
             <label for="category">Catégorie</label>
             <input type="text" id="category" name="category" required><br>
+
+            <label for="image_path">Chemin de l'image</label>
+            <input type="text" id="image_path" name="image_path" placeholder="/src/img/default.jpg"><br>
 
             <button type="submit">Ajouter</button>
         </form>

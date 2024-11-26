@@ -9,14 +9,16 @@ class ComicsManager
         $this->db = $db;
     }
 
-    public function addComicsToDB($title_comics, $author, $category, $created_at)
+    public function addComicsToDB($title_comics, $author, $category, $image_path, $created_at)
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO comics (title_comics, author, category, created_at) VALUES (:title_comics, :author, :category, :created_at)");
+            $stmt = $this->db->prepare("INSERT INTO comics (title_comics, author, category, image_path, created_at) 
+                                        VALUES (:title_comics, :author, :category, :image_path, :created_at)");
             $stmt->execute([
                 ':title_comics' => $title_comics,
                 ':author' => $author,
                 ':category' => $category,
+                ':image_path' => $image_path,
                 ':created_at' => $created_at,
             ]);
             echo "Comic ajouté avec succès !<br>";
@@ -24,7 +26,7 @@ class ComicsManager
             echo "Erreur lors de l'ajout du comic : " . $e->getMessage() . "<br>";
         }
     }
-
+    
     public function getAllComics()
     {
         try {
