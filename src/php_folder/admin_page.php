@@ -1,7 +1,7 @@
 <?php
-session_start();
-include_once("header.php");
+require_once("header.php");
 require_once("admin.php");
+require_once 'users.php';
 
 // Configuration de la base de données
 $host = 'localhost';
@@ -68,9 +68,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_chapter'])) {
         echo "Tous les champs sont requis pour ajouter un chapitre.<br>";
     }
 }
+
+$userManager = new UserManager($bdd);
+
+// Récupérer les données
+$comics = $comicsManager->getAllComics();
+$users = $userManager->getAllUsers();
+
 ?>
 
 <body>
+    <div class="container">
+        <h2>Liste des Utilisateurs</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?= htmlspecialchars($user['email']) ?></td>
+                    <td><?= htmlspecialchars($user['pseudo']) ?></td>
+                    <td>
+                        <button onclick="deleteUser(<?= $user['id_user'] ?>)">Delete</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h2>Liste des Comics</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Comic</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($comics as $comic): ?>
+                <tr>
+                    <td><?= htmlspecialchars($comic['title_comics']) ?></td>
+                    <td><?= htmlspecialchars($comic['author']) ?></td>
+                    <td><?= htmlspecialchars($comic['category']) ?></td>
+                    <td><?= htmlspecialchars($comic['created_at']) ?></td>
+                    <td>
+                        <button onclick="editComic(<?= $comic['id_comics'] ?>)">Edit</button>
+                        <button onclick="deleteComic(<?= $comic['id_comics'] ?>)">Delete</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
     <div class="container">
         <h2>Ajouter un Comic</h2>
         <form action="admin_page.php" method="post">
@@ -111,4 +169,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_chapter'])) {
         </form>
     </div>
 </body>
+<script>
+function deleteComic(id) {
+    if (confirm('Voulez-vous vraiment supprimer ce comic ?')) {
+        window.location.href = 'delete_comic.php?id=' + id;
+    }
+}
+
+function deleteUser(id) {
+    if (confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) {
+        window.location.href = 'delete_user.php?id=' + id;
+    }
+}
+
+
+function editComic(id) {
+    window.location.href = 'edit_comic.php?id=' + id;
+}
+</script>
 </html>
