@@ -56,7 +56,7 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
-  <link rel="stylesheet" href="../output.css">
+  <link rel="stylesheet" href="../style.css">
   <title>Login</title>
 </head>
 

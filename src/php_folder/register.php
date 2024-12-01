@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
 ?>
 
 <head>
-  <link rel="stylesheet" href="../output.css">
+  <link rel="stylesheet" href="../style.css">
 </head>
 
 

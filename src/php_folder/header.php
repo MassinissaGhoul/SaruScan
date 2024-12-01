@@ -28,7 +28,7 @@ try {
                     <a href="homepage.php" class="hover:text-blue-400 transition">Home</a>
                     <a href="comics.php" class="hover:text-blue-400 transition">Comics</a>
                     <a href="category.php" class="hover:text-blue-400 transition">Category</a>
-                    <a href="favorite.php" class="hover:text-blue-400 transition">Favorite</a>
+                    <a href="favorites.php" class="hover:text-blue-400 transition">Favorite</a>
                 </div>
 
                 <!-- Right - User Options -->
