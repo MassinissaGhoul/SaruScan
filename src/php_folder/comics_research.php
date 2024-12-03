@@ -1,7 +1,6 @@
 <?php
 require_once 'header.php';
-require_once 'comics.php'; // Inclusion des classes
-
+require_once 'comics.php'; 
 // Récupération des comics dans la base de données
 $comicsManager = new ComicsManager();
 $query = $bdd->query("SELECT * FROM comics ");
@@ -24,7 +23,6 @@ if (!empty($search)) {
     // Recherche dans les objets comics
     $results = $comicsManager->search_comics($search);
 
-    // Affichage des résultats de la recherche
     if (!empty($results)) {
         echo "<h2>Résultats de recherche :</h2>";
         foreach ($results as $comics) {
