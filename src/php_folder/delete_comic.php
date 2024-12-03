@@ -1,7 +1,7 @@
 <?php
 require_once("admin.php");
 
-// Configuration de la base de données
+
 $host = 'localhost';
 $db = 'saruscan';
 $user = 'root';
@@ -19,20 +19,27 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
     $comicsManager = new ComicsManager($pdo);
 } catch (PDOException $e) {
-    die(json_encode(['success' => false, 'error' => $e->getMessage()]));
-}
-
-// Vérifie que l'ID du comic est envoyé
-$data = json_decode(file_get_contents("php://input"), true);
-if (!isset($data['id'])) {
-    echo json_encode(['success' => false, 'error' => 'ID comic manquant.']);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'Erreur de connexion']);
     exit();
 }
 
-$comicId = $data['id'];
+// Récupération de l'ID envoyé via JSON
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data['id'])) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'ID comic manquant']);
+    exit();
+}
+
+$comicId = (int)$data['id'];
+
 try {
     $comicsManager->deleteComic($comicId);
+    header('Content-Type: application/json');
     echo json_encode(['success' => true]);
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+} catch (PDOException $e) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'Erreur lors de la suppression']);
 }
+?>

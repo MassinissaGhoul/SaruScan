@@ -1,7 +1,6 @@
 <?php
 require_once("admin.php");
-
-// Configuration de la base de données
+    // Configuration de la base de données
 $host = 'localhost';
 $db = 'saruscan';
 $user = 'root';

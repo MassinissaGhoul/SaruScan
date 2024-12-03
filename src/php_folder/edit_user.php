@@ -1,6 +1,6 @@
 <?php
-require_once("users.php");
 
+require_once("users.php");
 // Configuration de la base de données
 $host = 'localhost';
 $db = 'saruscan';

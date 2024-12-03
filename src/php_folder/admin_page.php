@@ -169,26 +169,6 @@ $users = $userManager->getAllUsers();
     </div>
 </body>
 <script>
-function deleteComic(id) {
-    if (confirm('Voulez-vous vraiment supprimer ce comic ?')) {
-        fetch('delete_comic.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Comic supprimé avec succès !');
-                location.reload();
-            } else {
-                alert('Erreur : ' + data.error);
-            }
-        })
-        .catch(error => console.error('Erreur réseau:', error));
-    }
-}
-
 function deleteUser(id) {
     if (confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) {
         fetch('delete_user.php', {
@@ -196,18 +176,28 @@ function deleteUser(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Utilisateur supprimé avec succès !');
-                location.reload();
-            } else {
-                alert('Erreur : ' + data.error);
-            }
-        })
-        .catch(error => console.error('Erreur réseau:', error));
+        .finally(() => {
+            // Recharge toujours la page après la tentative
+            location.reload();
+        });
     }
 }
+
+
+function deleteComic(id) {
+    if (confirm('Voulez-vous vraiment supprimer ce comic ?')) {
+        fetch('delete_comic.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        })
+        .finally(() => {
+            // Recharge toujours la page après la tentative
+            location.reload();
+        });
+    }
+}
+
 
 function editComic(id) {
     window.location.href = 'edit_comic.php?id=' + id;
