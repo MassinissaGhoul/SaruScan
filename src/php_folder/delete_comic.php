@@ -1,25 +1,38 @@
 <?php
-require_once 'header.php';
-require_once 'admin.php'; // Classe ComicsManager
+require_once("admin.php");
 
-// Vérifie si un ID est passé en paramètre
-if (isset($_GET['id'])) {
-    $id_comics = (int)$_GET['id']; // Récupère et sécurise l'ID du comic
+// Configuration de la base de données
+$host = 'localhost';
+$db = 'saruscan';
+$user = 'root';
+$pass = '';
+$charset = 'utf8mb4';
 
-    try {
-        // Initialise la classe ComicsManager avec votre connexion PDO
-        $comicsManager = new ComicsManager($bdd);
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
-        // Appelle la méthode pour supprimer le comic
-        $comicsManager->deleteComic($id_comics);
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+    $comicsManager = new ComicsManager($pdo);
+} catch (PDOException $e) {
+    die(json_encode(['success' => false, 'error' => $e->getMessage()]));
+}
 
-        // Redirige vers la page d'administration après suppression
-        header('Location: admin_page.php');
-        exit;
-    } catch (Exception $e) {
-        // Affiche un message d'erreur en cas de problème
-        echo "Erreur lors de la suppression du comic : " . $e->getMessage();
-    }
-} else {
-    echo "Aucun comic spécifié pour la suppression.";
+// Vérifie que l'ID du comic est envoyé
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data['id'])) {
+    echo json_encode(['success' => false, 'error' => 'ID comic manquant.']);
+    exit();
+}
+
+$comicId = $data['id'];
+try {
+    $comicsManager->deleteComic($comicId);
+    echo json_encode(['success' => true]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
