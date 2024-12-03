@@ -1,7 +1,7 @@
 <?php
 require_once("header.php");
 require_once("admin.php");
-require_once 'users.php';
+require_once("users.php");
 
 // Configuration de la base de données
 $host = 'localhost';
@@ -21,6 +21,7 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
     $comicsManager = new ComicsManager($pdo);
     $chapterManager = new ChapterManager($pdo);
+    $userManager = new UserManager($pdo);
     echo "Connexion réussie à la base de données !<br>";
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comic'])) {
     $title_comics = $_POST['comic'] ?? '';
     $author = $_POST['author'] ?? '';
     $category = $_POST['category'] ?? '';
-    $image_path = $_POST['image_path'] ?? '/src/img/default.jpg'; // Valeur par défaut si aucun chemin n'est fourni
+    $image_path = $_POST['image_path'] ?? '/src/img/default.jpg';
     $created_at = date('Y-m-d');
 
     if (!empty($title_comics) && !empty($author) && !empty($category)) {
@@ -50,31 +51,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_chapter'])) {
     $created_at = date('Y-m-d');
 
     if (!empty($comic_name) && !empty($chapter_number) && !empty($title_chapter) && !empty($chapter_image_path)) {
-        try {
-            $stmt = $pdo->prepare("SELECT id_comics FROM comics WHERE title_comics = :title_comics");
-            $stmt->execute([':title_comics' => $comic_name]);
-            $comic = $stmt->fetch();
+        $stmt = $pdo->prepare("SELECT id_comics FROM comics WHERE title_comics = :title_comics");
+        $stmt->execute([':title_comics' => $comic_name]);
+        $comic = $stmt->fetch();
 
-            if ($comic) {
-                $id_comics = $comic['id_comics'];
-                $chapterManager->addChapterToDB($id_comics, $title_chapter, $chapter_image_path, $chapter_number, $created_at);
-            } else {
-                echo "Comic non trouvé. Veuillez vérifier le nom.<br>";
-            }
-        } catch (PDOException $e) {
-            echo "Erreur lors de l'ajout du chapitre : " . $e->getMessage() . "<br>";
+        if ($comic) {
+            $id_comics = $comic['id_comics'];
+            $chapterManager->addChapterToDB($id_comics, $title_chapter, $chapter_image_path, $chapter_number, $created_at);
+        } else {
+            echo "Comic non trouvé. Veuillez vérifier le nom.<br>";
         }
     } else {
         echo "Tous les champs sont requis pour ajouter un chapitre.<br>";
     }
 }
 
-$userManager = new UserManager($bdd);
-
-// Récupérer les données
 $comics = $comicsManager->getAllComics();
 $users = $userManager->getAllUsers();
-
 ?>
 
 <body>
@@ -84,20 +77,27 @@ $users = $userManager->getAllUsers();
             <thead>
                 <tr>
                     <th>Email</th>
-                    <th>Username</th>
+                    <th>Nom d'utilisateur</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($users as $user): ?>
-                <tr>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
-                    <td><?= htmlspecialchars($user['pseudo']) ?></td>
-                    <td>
-                        <button onclick="deleteUser(<?= $user['id_user'] ?>)">Delete</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
+                <?php if (!empty($users)): ?>
+                    <?php foreach ($users as $user): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($user['email']) ?></td>
+                            <td><?= htmlspecialchars($user['username']) ?></td>
+                            <td>
+                                <button onclick="editUser(<?= $user['id_user'] ?>)">Modifier</button>
+                                <button onclick="deleteUser(<?= $user['id_user'] ?>)">Supprimer</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="3">Aucun utilisateur trouvé.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -107,9 +107,9 @@ $users = $userManager->getAllUsers();
             <thead>
                 <tr>
                     <th>Comic</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>Created At</th>
+                    <th>Auteur</th>
+                    <th>Catégorie</th>
+                    <th>Date de création</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -121,8 +121,8 @@ $users = $userManager->getAllUsers();
                     <td><?= htmlspecialchars($comic['category']) ?></td>
                     <td><?= htmlspecialchars($comic['created_at']) ?></td>
                     <td>
-                        <button onclick="editComic(<?= $comic['id_comics'] ?>)">Edit</button>
-                        <button onclick="deleteComic(<?= $comic['id_comics'] ?>)">Delete</button>
+                        <button onclick="editComic(<?= $comic['id_comics'] ?>)">Modifier</button>
+                        <button onclick="deleteComic(<?= $comic['id_comics'] ?>)">Supprimer</button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -148,7 +148,6 @@ $users = $userManager->getAllUsers();
             <button type="submit">Ajouter</button>
         </form>
     </div>
-
     <div class="container">
         <h2>Ajouter un Chapitre</h2>
         <form action="admin_page.php" method="post">
@@ -172,19 +171,50 @@ $users = $userManager->getAllUsers();
 <script>
 function deleteComic(id) {
     if (confirm('Voulez-vous vraiment supprimer ce comic ?')) {
-        window.location.href = 'delete_comic.php?id=' + id;
+        fetch('delete_comic.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Comic supprimé avec succès !');
+                location.reload();
+            } else {
+                alert('Erreur : ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erreur réseau:', error));
     }
 }
 
 function deleteUser(id) {
     if (confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) {
-        window.location.href = 'delete_user.php?id=' + id;
+        fetch('delete_user.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Utilisateur supprimé avec succès !');
+                location.reload();
+            } else {
+                alert('Erreur : ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erreur réseau:', error));
     }
 }
 
-
 function editComic(id) {
     window.location.href = 'edit_comic.php?id=' + id;
+}
+
+function editUser(id) {
+    window.location.href = 'edit_user.php?id=' + id;
 }
 </script>
 </html>
