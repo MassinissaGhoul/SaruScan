@@ -45,7 +45,9 @@ $best_comics = $best_comics_req->fetch();
 
           <div class="space-y-4">
             <?php 
-            foreach($comics as $comic){
+            $limitedComics = array_slice($comics, 0, 10); // Prendre seulement les 10 premiers
+
+            foreach($limitedComics as $comic){
               echo "<div class=\"flex items-center space-x-4\">
           <span class=\"text-gray-400\">#1</span>
           <img src=". $comic["image_path"] ." alt=\"Comic\" class=\"w-12 h-12 rounded\">
