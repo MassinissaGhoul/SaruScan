@@ -70,104 +70,122 @@ $comics = $comicsManager->getAllComics();
 $users = $userManager->getAllUsers();
 ?>
 
-<body>
-    <div class="container">
-        <h2>Liste des Utilisateurs</h2>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Nom d'utilisateur</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($users)): ?>
-                    <?php foreach ($users as $user): ?>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto py-10">
+        <!-- Liste des Utilisateurs -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Liste des Utilisateurs</h2>
+            <table class="table-auto w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">Nom d'utilisateur</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($users)): ?>
+                        <?php foreach ($users as $user): ?>
+                            <tr class="border-b">
+                                <td class="px-4 py-2"><?= htmlspecialchars($user['email']) ?></td>
+                                <td class="px-4 py-2"><?= htmlspecialchars($user['username']) ?></td>
+                                <td class="px-4 py-2">
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="editUser(<?= $user['id_user'] ?>)">Modifier</button>
+                                    <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onclick="deleteUser(<?= $user['id_user'] ?>)">Supprimer</button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td><?= htmlspecialchars($user['email']) ?></td>
-                            <td><?= htmlspecialchars($user['username']) ?></td>
-                            <td>
-                                <button onclick="editUser(<?= $user['id_user'] ?>)">Modifier</button>
-                                <button onclick="deleteUser(<?= $user['id_user'] ?>)">Supprimer</button>
+                            <td colspan="3" class="text-center py-4">Aucun utilisateur trouvé.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Liste des Comics -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Liste des Comics</h2>
+            <table class="table-auto w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-4 py-2">Comic</th>
+                        <th class="px-4 py-2">Auteur</th>
+                        <th class="px-4 py-2">Catégorie</th>
+                        <th class="px-4 py-2">Date de création</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($comics as $comic): ?>
+                        <tr class="border-b">
+                            <td class="px-4 py-2"><?= htmlspecialchars($comic['title_comics']) ?></td>
+                            <td class="px-4 py-2"><?= htmlspecialchars($comic['author']) ?></td>
+                            <td class="px-4 py-2"><?= htmlspecialchars($comic['category']) ?></td>
+                            <td class="px-4 py-2"><?= htmlspecialchars($comic['created_at']) ?></td>
+                            <td class="px-4 py-2">
+                                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="editComic(<?= $comic['id_comics'] ?>)">Modifier</button>
+                                <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onclick="deleteComic(<?= $comic['id_comics'] ?>)">Supprimer</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="3">Aucun utilisateur trouvé.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h2>Liste des Comics</h2>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Comic</th>
-                    <th>Auteur</th>
-                    <th>Catégorie</th>
-                    <th>Date de création</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($comics as $comic): ?>
-                <tr>
-                    <td><?= htmlspecialchars($comic['title_comics']) ?></td>
-                    <td><?= htmlspecialchars($comic['author']) ?></td>
-                    <td><?= htmlspecialchars($comic['category']) ?></td>
-                    <td><?= htmlspecialchars($comic['created_at']) ?></td>
-                    <td>
-                        <button onclick="editComic(<?= $comic['id_comics'] ?>)">Modifier</button>
-                        <button onclick="deleteComic(<?= $comic['id_comics'] ?>)">Supprimer</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h2>Ajouter un Comic</h2>
-        <form action="admin_page.php" method="post">
-            <input type="hidden" name="add_comic" value="1">
-            <label for="comic">Titre</label>
-            <input type="text" id="comic" name="comic" required><br>
+                </tbody>
+            </table>
+        </div>
 
-            <label for="author">Auteur</label>
-            <input type="text" id="author" name="author" required><br>
+        <!-- Ajouter un Comic -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Ajouter un Comic</h2>
+            <form action="admin_page.php" method="post" class="bg-white p-6 shadow-md rounded-lg">
+                <input type="hidden" name="add_comic" value="1">
+                <div class="mb-4">
+                    <label for="comic" class="block text-sm font-medium">Titre</label>
+                    <input type="text" id="comic" name="comic" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="author" class="block text-sm font-medium">Auteur</label>
+                    <input type="text" id="author" name="author" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="category" class="block text-sm font-medium">Catégorie</label>
+                    <input type="text" id="category" name="category" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="image_path" class="block text-sm font-medium">Chemin de l'image</label>
+                    <input type="text" id="image_path" name="image_path" placeholder="/src/img/default.jpg" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Ajouter</button>
+            </form>
+        </div>
 
-            <label for="category">Catégorie</label>
-            <input type="text" id="category" name="category" required><br>
-
-            <label for="image_path">Chemin de l'image</label>
-            <input type="text" id="image_path" name="image_path" placeholder="/src/img/default.jpg"><br>
-
-            <button type="submit">Ajouter</button>
-        </form>
-    </div>
-    <div class="container">
-        <h2>Ajouter un Chapitre</h2>
-        <form action="admin_page.php" method="post">
-            <input type="hidden" name="add_chapter" value="1">
-            <label for="comic_name">Nom du Comic</label>
-            <input type="text" id="comic_name" name="comic_name" required><br>
-
-            <label for="chapter_number">Numéro du Chapitre</label>
-            <input type="number" id="chapter_number" name="chapter_number" required><br>
-
-            <label for="title">Titre</label>
-            <input type="text" id="title" name="title" required><br>
-
-            <label for="chapter_image_path">Chemin des Images</label>
-            <input type="text" id="chapter_image_path" name="chapter_image_path" required><br>
-
-            <button type="submit">Ajouter</button>
-        </form>
+        <!-- Ajouter un Chapitre -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Ajouter un Chapitre</h2>
+            <form action="admin_page.php" method="post" class="bg-white p-6 shadow-md rounded-lg">
+                <input type="hidden" name="add_chapter" value="1">
+                <div class="mb-4">
+                    <label for="comic_name" class="block text-sm font-medium">Nom du Comic</label>
+                    <input type="text" id="comic_name" name="comic_name" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="chapter_number" class="block text-sm font-medium">Numéro du Chapitre</label>
+                    <input type="number" id="chapter_number" name="chapter_number" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="title" class="block text-sm font-medium">Titre</label>
+                    <input type="text" id="title" name="title" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="chapter_image_path" class="block text-sm font-medium">Chemin des Images</label>
+                    <input type="text" id="chapter_image_path" name="chapter_image_path" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Ajouter</button>
+            </form>
+        </div>
     </div>
 </body>
+
 <script>
 function deleteUser(id) {
     if (confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) {
