@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once 'db.php';
+require_once '../methode/db.php';
 ?>
 
 <!DOCTYPE html>
@@ -10,8 +10,8 @@ require_once 'db.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="../input.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../input.css">
     <title>SaruScan</title>
 </head>
 
@@ -32,7 +32,7 @@ require_once 'db.php';
                 <div class="space-x-4">
                     <?php if (isset($_SESSION['user'])): ?>
                         <span>Bienvenue, <strong><?php echo htmlspecialchars($_SESSION['user']['username']); ?></strong></span>
-                        <a href="logout.php" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded text-sm">Log out</a>
+                        <a href="../methode/logout.php" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded text-sm">Log out</a>
                     <?php else: ?>
                         <a href="login.php" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm">Sign in</a>
                     <?php endif; ?>

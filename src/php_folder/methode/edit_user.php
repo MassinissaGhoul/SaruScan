@@ -1,7 +1,7 @@
 <?php
 
-require_once("users.php");
-require_once("header.php");
+require_once("../class/users.php");
+require_once("../page/header.php");
 require_once("db.php");
 
 try {

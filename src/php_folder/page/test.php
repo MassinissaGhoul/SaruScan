@@ -1,6 +1,6 @@
 <?php
-require_once 'comics.php';
-require_once 'db.php';
+require_once '../class/comics.php';
+require_once '../methode/db.php';
 
 // Gérer la sélection du manga
 if (isset($_GET['manga_id'])) {

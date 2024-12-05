@@ -1,6 +1,5 @@
 <?php
 include_once("header.php");
-require_once("db.php");
 $comics_req = $pdo->query("SELECT * FROM comics");
 $comics = $comics_req->fetchAll();
 

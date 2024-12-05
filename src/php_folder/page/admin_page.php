@@ -1,8 +1,7 @@
 <?php
 require_once("header.php");
-require_once("admin.php");
-require_once("users.php");
-require_once("db.php");
+require_once("../class/admin.php");
+require_once("../class/users.php");
 // Configuration de la base de données
 
 try {

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("db.php");
+require_once("../methode/db.php");
 
 
 if (isset($_POST['submit'])) {
@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
 
   if (empty($errors)) {
     // Vérifier si l'utilisateur existe
-    $stmt = $bdd->prepare('SELECT * FROM user WHERE email = :email');
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE email = :email');
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -51,7 +51,7 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
-  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../../style.css">
   <title>Login</title>
 </head>
 

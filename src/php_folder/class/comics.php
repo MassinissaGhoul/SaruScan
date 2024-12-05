@@ -59,9 +59,9 @@ class Comics
 
     public function comics_category($id_comics)
     {
-        global $bdd;
+        global $pdo;
         $category_liste = [];
-        $category_req = $bdd->prepare("SELECT category FROM category WHERE id_comics = :c");
+        $category_req = $pdo->prepare("SELECT category FROM category WHERE id_comics = :c");
         $category_req->execute([':c' => $id_comics]);
 
         while ($category_comics = $category_req->fetch(PDO::FETCH_ASSOC)) {

@@ -1,6 +1,6 @@
 <?php
 include_once("header.php");
-require_once("db.php");
+require_once("../methode/db.php");
 
 
 // Vérification utilisateur connecté
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (empty($errors)) {
     try {
-      $stmt = $bdd->prepare('UPDATE user SET username = :username, email = :email WHERE id = :id');
+      $stmt = $pdo->prepare('UPDATE user SET username = :username, email = :email WHERE id = :id');
       $stmt->execute(['username' => $new_username, 'email' => $new_email, 'id' => $user['id']]);
 
       if (!empty($profile_picture['name'])) {
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_file = $target_dir . basename($profile_picture["name"]);
         move_uploaded_file($profile_picture["tmp_name"], $target_file);
 
-        $bdd->prepare('UPDATE user SET profile_picture = :profile_picture WHERE id = :id')
+        $pdo->prepare('UPDATE user SET profile_picture = :profile_picture WHERE id = :id')
           ->execute(['profile_picture' => $target_file, 'id' => $user['id']]);
 
         $user['profile_picture'] = $target_file;

@@ -1,6 +1,6 @@
 <?php
 
-require_once("db.php");
+require_once("../methode/db.php");
 session_start();
 
 
@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
 
   if (empty($errors)) {
     //Vérifie si l'utilisateur ou l'email est déjà dans la bdd
-    $stmt = $bdd->prepare('SELECT * FROM user WHERE username = :username OR email = :email');
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = :username OR email = :email');
     $stmt->execute(['username' => $username, 'email' => $email]);
 
     if ($stmt->fetch()) {
@@ -38,7 +38,7 @@ if (isset($_POST['submit'])) {
       $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
       // nouvel utilisateur
-      $stmt = $bdd->prepare('INSERT INTO user (username, email, password, is_admin) VALUES (:username, :email, :password, :is_admin)');
+      $stmt = $pdo->prepare('INSERT INTO user (username, email, password, is_admin) VALUES (:username, :email, :password, :is_admin)');
       $stmt->execute([
 
         'username' => $username,
@@ -64,7 +64,7 @@ if (isset($_POST['submit'])) {
 ?>
 
 <head>
-  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../../style.css">
 </head>
 
 
