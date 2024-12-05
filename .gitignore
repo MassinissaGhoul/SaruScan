@@ -54,3 +54,6 @@
 # Ignorer les fichiers de configuration spécifiques à l'utilisateur
 .vscode/
 .idea/
+
+\src\php_folder\methode\db.php
+
