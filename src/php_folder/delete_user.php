@@ -2,22 +2,9 @@
 // require_once("admin.php");
 // require_once("comics.php");
 require_once("users.php");
-
-$host = 'localhost';
-$db = 'saruscan';
-$user = 'root';
-$pass = '';
-$charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+require_once("db.php");
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
     $userManager = new UserManager($pdo);
 } catch (PDOException $e) {
     header('Content-Type: application/json');

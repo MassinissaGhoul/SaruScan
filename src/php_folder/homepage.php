@@ -1,9 +1,10 @@
 <?php
 include_once("header.php");
-$comics_req = $bdd->query("SELECT * FROM comics");
+require_once("db.php");
+$comics_req = $pdo->query("SELECT * FROM comics");
 $comics = $comics_req->fetchAll();
 
-$best_comics_req = $bdd->query("SELECT * FROM comics WHERE id_comics = 2");
+$best_comics_req = $pdo->query("SELECT * FROM comics WHERE id_comics = 2");
 $best_comics = $best_comics_req->fetch();
 ?>
 
@@ -66,6 +67,7 @@ $best_comics = $best_comics_req->fetch();
 
     <!-- All Comics Section -->
     <section class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+      
       <?php foreach ($comics as $comic): ?>
         <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden h-64">
           <div class="w-2/5">

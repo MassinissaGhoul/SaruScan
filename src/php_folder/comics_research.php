@@ -1,6 +1,7 @@
 <?php
 require_once 'header.php';
-require_once 'comics.php'; 
+require_once 'comics.php';
+ 
 // Récupération des comics dans la base de données
 $comicsManager = new ComicsManager();
 $query = $bdd->query("SELECT * FROM comics ");
