@@ -1,51 +1,53 @@
 <?php
+
 session_start();
 require_once("../methode/db.php");
 
-
 if (isset($_POST['submit'])) {
-  $email = trim($_POST['email']);
-  $password = $_POST['password'];
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
 
-  // Initialiser les erreurs
-  $errors = [];
+    // Initialiser les erreurs
+    $errors = [];
 
-  // Valider les champs
-  if (empty($email) || empty($password)) {
-    $errors[] = "All fields are required.";
-  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "Invalid email format.";
-  }
-
-  if (empty($errors)) {
-    // Vérifier si l'utilisateur existe
-    $stmt = $pdo->prepare('SELECT * FROM user WHERE email = :email');
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($password, $user['password'])) {
-      // Stocker les informations de l'utilisateur dans la session
-      $_SESSION['user'] = [
-        'id' => $user['id'],
-        'username' => $user['username'],
-        'email' => $user['email'],
-        'is_admin' => $user['is_admin']
-      ];
-      header('Location: homepage.php'); // Rediriger vers la page d'accueil
-      exit();
-    } else {
-      $errors[] = "Invalid email or password.";
+    // Valider les champs
+    if (empty($email) || empty($password)) {
+        $errors[] = "Tous les champs sont requis.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Le format de l'email est invalide.";
     }
-  }
 
-  // Enregistrer les erreurs dans la session
-  $_SESSION['errors'] = $errors;
-  if (!empty($errors)) {
-    header('Location: login.php'); // Recharger la page avec les erreurs
-    exit();
-  }
+    if (empty($errors)) {
+        // Vérifier si l'utilisateur existe
+        $stmt = $pdo->prepare('SELECT * FROM user WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password'])) {
+            // Stocker les informations de l'utilisateur dans la session
+            $_SESSION['user'] = [
+                'id_user' => $user['id_user'], // Utiliser l'ID exact de la base de données
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'is_admin' => $user['is_admin'],
+                'image_path' => $user['image_path'] ?? 'default-profile.png' // Ajouter une valeur par défaut si manquante
+            ];
+            header('Location: homepage.php'); // Rediriger vers la page d'accueil
+            exit();
+        } else {
+            $errors[] = "Email ou mot de passe invalide.";
+        }
+    }
+
+    // Enregistrer les erreurs dans la session
+    $_SESSION['errors'] = $errors;
+    if (!empty($errors)) {
+        header('Location: login.php'); // Recharger la page avec les erreurs
+        exit();
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

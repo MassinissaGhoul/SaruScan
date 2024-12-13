@@ -1,5 +1,6 @@
 <?php 
-include_once("header.php");
+include_once("../page/header.php");
+include_once("../methode/db.php");
 ?>
 
 <?php
@@ -116,6 +117,36 @@ class ComicsManager
 
         return $results;
     }
+    public function rateComic($userId, $comicId, $rate)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("
+        INSERT INTO rate (id_user, id_comics, rate) 
+        VALUES (:user_id, :comic_id, :rate)
+        ON DUPLICATE KEY UPDATE rate = :rate
+    ");
+    $stmt->execute([
+        ':user_id' => $userId,
+        ':comic_id' => $comicId,
+        ':rate' => $rate
+    ]);
+}
+
+    public function getAverageRating($comicId)
+    {
+        global $pdo;
+        $stmt = $pdo->prepare("
+            SELECT AVG(rate) as average_rating 
+            FROM rate 
+            WHERE id_comics = :comic_id
+        ");
+        $stmt->execute([':comic_id' => $comicId]);
+        $average = $stmt->fetchColumn();
+
+        // Vérifier si la moyenne est nulle et retourner une valeur par défaut (ex. 0)
+        return $average !== null ? round($average, 1) : 0;
+    }
+
 }
 
 class Chapter
@@ -202,7 +233,13 @@ class Chapter
         }
         return null;
     }
+    function addViewCount($chapterId, $pdo) {
+
+        $stmt = $pdo->prepare("UPDATE chapter SET view_count = view_count + 1 WHERE id_chapter = :chapter");
+        $stmt->execute([':chapter' => $chapterId]);
+
 }
 
+}
 
 ?>
