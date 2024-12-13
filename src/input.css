@@ -31,3 +31,48 @@
 .chapter-item:last-child {
   border-bottom: none;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Image */
+.comic-image {
+  max-height: 250px;
+}
+/* Titre */
+.comic-container h3 {
+  font-size: 1.75rem;
+  line-height: 1.25rem;
+}
+/* Chapitre individuel */
+.chapter-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  height: 3rem;
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  /* cursor: pointer; */
+}
+
+.chapter-item:hover {
+  background-color: #1f2937; /* Seulement la couleur change */
+}
+
+/* Dernier chapitre sans bordure */
+.chapter-item:last-child {
+  border-bottom: none;
+}
+
+
+.badge {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.badge:hover {
+  transform: scale(1.05);
+}
+.comic-container:hover {
+  background-color: #2d3748; /* Couleur foncée */
+}
