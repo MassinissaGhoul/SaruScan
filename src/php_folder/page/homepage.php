@@ -1,8 +1,48 @@
 <?php
 include_once("header.php");
-$comics_req = $pdo->query("SELECT * FROM comics");
+//requete comics populaire
+$comics_req = $pdo->query("SELECT 
+    comics.id_comics, 
+    comics.title_comics, 
+    comics.image_path, 
+    comics.author, 
+    comics.created_at, 
+    comics.category, 
+    comics.description, 
+    SUM(chapter.view_count) AS total_views
+FROM 
+    comics 
+LEFT JOIN 
+    chapter 
+ON 
+    comics.id_comics = chapter.id_comics 
+GROUP BY 
+    comics.id_comics
+ORDER BY total_views DESC");
 $comics = $comics_req->fetchAll();
 
+//requete liste des comics
+$liste_comics_req = $pdo->query("SELECT 
+    comics.id_comics, 
+    comics.title_comics, 
+    comics.image_path, 
+    comics.author, 
+    comics.created_at, 
+    comics.category, 
+    comics.description, 
+    SUM(chapter.view_count) AS total_views
+FROM 
+    comics 
+LEFT JOIN 
+    chapter 
+ON 
+    comics.id_comics = chapter.id_comics 
+GROUP BY 
+    comics.id_comics
+ORDER BY comics.created_at DESC");
+
+$liste_comics = $liste_comics_req->fetchall();
+//requete carousselle 
 $best_comics_req = $pdo->query("SELECT * FROM comics WHERE id_comics = 2");
 $best_comics = $best_comics_req->fetch();
 ?>
@@ -46,16 +86,17 @@ $best_comics = $best_comics_req->fetch();
           <div class="space-y-4">
             <?php 
             $limitedComics = array_slice($comics, 0, 10); // Prendre seulement les 10 premiers
-
+            $compt = 1;
             foreach($limitedComics as $comic){
               echo "<div class=\"flex items-center space-x-4\">
-          <span class=\"text-gray-400\">#1</span>
+          <span class=\"text-gray-400\">#". $compt ."</span>
           <img src=". $comic["image_path"] ." alt=\"Comic\" class=\"w-12 h-12 rounded\">
           <div>
-            <h4 class=\"font-semibold\">". $comic["title_comics"]."</h4>
+            <a href=\"comics_page.php?title=". $comic["title_comics"] ."\"><h4 class=\"font-semibold\">". $comic["title_comics"]."</h4></a>
             <div class=\"text-yellow-400\">⭐⭐⭐⭐⭐ <span class=v\"text-sm\">9.9</span></div>
           </div>
         </div>";
+        $compt += 1;
               
             }
             ?>
@@ -67,7 +108,7 @@ $best_comics = $best_comics_req->fetch();
     <!-- All Comics Section -->
     <section class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
       
-      <?php foreach ($comics as $comic): ?>
+      <?php foreach ($liste_comics as $comic): ?>
         <div class="comic-container bg-gray-900 rounded-lg shadow-lg flex overflow-hidden h-64">
           <div class="w-2/5">
             <img src="<?php echo $comic["image_path"] ?>" alt="Comic Image" class="comic-image h-full w-full object-cover">
@@ -75,7 +116,7 @@ $best_comics = $best_comics_req->fetch();
 
           <div class="w-3/5 p-6 flex flex-col justify-between">
             <div>
-              <h3 class="text-xl font-bold text-white mb-3"> <?php echo $comic["title_comics"] ?></h3>
+            <a href="comics_page.php?title=<?php echo $comic["title_comics"] ?>"><h3 class="text-xl font-bold text-white mb-3"> <?php echo $comic["title_comics"] ?></h3></a>
               <div class="flex items-center justify-between mb-4">
                 <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
                 <div class="flex items-center space-x-1 text-yellow-400">
@@ -88,20 +129,17 @@ $best_comics = $best_comics_req->fetch();
                 </div>
               </div>
             </div>
-
+            <?php
+            $chapter_list = $pdo->prepare("SELECT comics_path, id_comics, title_chapter, created_at FROM chapter WHERE id_comics = :i");
+            $chapter_list->execute([':i' => $comic["id_comics"]]);
+            ?>
             <div class="chapter-list">
-              <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
-                <span class="font-semibold text-white">Chapter 133</span>
-                <span class="text-gray-400 text-sm">23 hours ago</span>
-              </div>
-              <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
-                <span class="font-semibold text-white">Chapter 132</span>
-                <span class="text-gray-400 text-sm">2 days ago</span>
-              </div>
-              <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300">
-                <span class="font-semibold text-white">Chapter 131</span>
-                <span class="text-gray-400 text-sm">3 days ago</span>
-              </div>
+              <?php while($chapter = $chapter_list->fetch()):?>
+                <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
+                  <span class="font-semibold text-white"><?php echo $chapter["title_chapter"] ?></span>
+                  <span class="text-gray-400 text-sm"><?php echo $chapter["created_at"] ?></span>
+                </div>
+              <?php endwhile; ?>
             </div>
           </div>
         </div>
@@ -114,3 +152,4 @@ $best_comics = $best_comics_req->fetch();
     <p class="animate-scroll">Animation de nos noms de gauche à droite en mode add</p>
   </footer>
 </body>
+

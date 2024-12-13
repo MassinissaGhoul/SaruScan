@@ -8,8 +8,7 @@ $query = $pdo->query("SELECT * FROM comics ");
 
 
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['create_at'], $row['image_path']);
-    $comics->comics_category($comics->get_id_comics());
+    $comics = new Comics($row['id_comics'], $row['title_comics'], $row['author'], $row['created_at'], $row['image_path'], $row["category"]);
     $comicsManager->add_comics($comics);
 }
 
@@ -28,9 +27,9 @@ if (!empty($search)) {
         echo "<h2>Résultats de recherche :</h2>";
         foreach ($results as $comics) {
             echo '<img src ="' . $comics->get_img() . '" width="200px">';
-            echo "Titre : " . $comics->get_title_comics() . "<br>";
+            echo "Titre : <a href=\"comics_page.php?title=" . urlencode($comics->get_title_comics()) . "\">" . htmlspecialchars($comics->get_title_comics()) . "</a> <br>";
             echo "Auteur : " . $comics->get_author() . "<br>";
-            echo "category : " .$comics->category_to_string() . "<br>";
+            echo "category : " .$comics->get_category() . "<br>";
         }
     } else {
         echo "Aucun résultat trouvé pour '$search'.";
@@ -38,3 +37,5 @@ if (!empty($search)) {
 }
 
 ?>
+
+

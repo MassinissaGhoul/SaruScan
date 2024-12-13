@@ -14,13 +14,14 @@ class Comics
     private $created_at;
     private $img_path;
 
-    public function __construct($id_comics, $title_comics, $author, $created_at, $img_path)
+    public function __construct($id_comics, $title_comics, $author, $created_at, $img_path,$category)
     {
         $this->id_comics = $id_comics;
         $this->title_comics = $title_comics;
         $this->author = $author;
         $this->created_at = $created_at;
         $this->img_path = $img_path;
+        $this->category = $category;
     }
 
     public function get_id_comics()
@@ -43,11 +44,6 @@ class Comics
         return $this->category;
     }
 
-    public function category_to_string()
-    {
-        return implode(" ", $this->category);
-    }
-
     public function get_created_at()
     {
         return $this->created_at;
@@ -56,20 +52,6 @@ class Comics
     public function get_img()
     {
         return $this->img_path;
-    }
-
-    public function comics_category($id_comics)
-    {
-        global $pdo;
-        $category_liste = [];
-        $category_req = $pdo->prepare("SELECT category FROM category WHERE id_comics = :c");
-        $category_req->execute([':c' => $id_comics]);
-
-        while ($category_comics = $category_req->fetch(PDO::FETCH_ASSOC)) {
-            $category_liste[] = $category_comics['category'];
-        }
-
-        $this->category = $category_liste;
     }
 }
 

@@ -23,7 +23,6 @@ require_once '../methode/db.php';
                 <!-- Left - Navigation Links -->
                 <div class="flex space-x-4">
                     <a href="homepage.php" class="hover:text-blue-400 transition">Home</a>
-                    <a href="comics.php" class="hover:text-blue-400 transition">Comics</a>
                     <a href="category_page.php?category=" class="hover:text-blue-400 transition">Category</a>
                     <a href="favorites.php" class="hover:text-blue-400 transition">Favorite</a>
                 </div>
