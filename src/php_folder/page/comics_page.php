@@ -65,17 +65,26 @@ echo $title;
             </div>
 
             <!-- Liste des chapitres -->
-            <div class="chapter-list">
+            <div class="chapter-list mt-4">
                 <?php while ($chapter = $chapter_req->fetch()): ?>
                     <div class="chapter-item flex justify-between items-center px-3 py-2 hover:bg-gray-800 transition duration-300 border-b border-gray-700 last:border-b-0">
                         <span class="font-semibold text-white">
-                            <?php echo htmlspecialchars($chapter["title_chapter"])," view =",  htmlspecialchars($chapter["view_count"]); ?>
+                            <?php echo htmlspecialchars($chapter["title_chapter"]) . " (views: " . htmlspecialchars($chapter["view_count"]) . ")"; ?>
                         </span>
-                        <a 
-                            href="test.php?chapter_path=<?php echo urlencode($chapter['comics_path']); ?>&manga_id=<?php echo htmlspecialchars($comic['id_comics']); ?>" 
-                            class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-500">
-                            Voir le chapitre
-                        </a>
+                        <div class="flex space-x-2">
+                            <!-- Bouton pour voir le chapitre -->
+                            <a 
+                                href="test.php?chapter_path=<?php echo urlencode($chapter['comics_path']); ?>&manga_id=<?php echo htmlspecialchars($comic['id_comics']); ?>" 
+                                class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-500">
+                                Voir le chapitre
+                            </a>
+                            <!-- Bouton pour télécharger le chapitre -->
+                            <a 
+                                href="../methode/download_chapter.php?chapter_path=<?php echo urlencode($chapter['comics_path']); ?>" 
+                                class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-500">
+                                Télécharger
+                            </a>
+                        </div>
                     </div>
                 <?php endwhile; ?>
             </div>
