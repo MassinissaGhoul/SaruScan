@@ -2,23 +2,29 @@
 include_once("header.php");
 //requete comics populaire
 $comics_req = $pdo->query("SELECT 
-    comics.id_comics, 
-    comics.title_comics, 
-    comics.image_path, 
-    comics.author, 
-    comics.created_at, 
-    comics.category, 
-    comics.description, 
-    SUM(chapter.view_count) AS total_views
-FROM 
-    comics 
-LEFT JOIN 
-    chapter 
-ON 
-    comics.id_comics = chapter.id_comics 
+    c.id_comics,
+    c.title_comics,
+    c.image_path,
+    c.author,
+    c.created_at,
+    c.category,
+    c.description,
+    SUM(ch.view_count)                     AS total_views,
+    COUNT(DISTINCT r.id_user)             AS notation
+FROM comics c
+LEFT JOIN chapter ch 
+       ON c.id_comics = ch.id_comics
+LEFT JOIN rate r 
+       ON c.id_comics = r.id_comics
 GROUP BY 
-    comics.id_comics
-ORDER BY total_views DESC");
+    c.id_comics,
+    c.title_comics,
+    c.image_path,
+    c.author,
+    c.created_at,
+    c.category,
+    c.description
+ORDER BY total_views DESC;");
 $comics = $comics_req->fetchAll();
 
 //requete liste des comics
@@ -30,20 +36,27 @@ $liste_comics_req = $pdo->query("SELECT
     comics.created_at, 
     comics.category, 
     comics.description, 
-    SUM(chapter.view_count) AS total_views
-FROM 
-    comics 
-LEFT JOIN 
-    chapter 
-ON 
-    comics.id_comics = chapter.id_comics 
-GROUP BY 
-    comics.id_comics
-ORDER BY comics.created_at DESC");
+    SUM(chapter.view_count) AS total_views,
+    COUNT(DISTINCT rate.id_user) AS notation
+FROM comics
+LEFT JOIN chapter 
+       ON comics.id_comics = chapter.id_comics
+LEFT JOIN rate 
+       ON comics.id_comics = rate.id_comics
+GROUP BY comics.id_comics
+ORDER BY comics.created_at DESC;
+");
 
 $liste_comics = $liste_comics_req->fetchall();
 //requete carousselle 
-$best_comics_req = $pdo->query("SELECT * FROM comics WHERE id_comics = 2");
+$best_comics_req = $pdo->query("SELECT 
+    c.*,
+    COUNT(DISTINCT r.id_user) AS notation
+FROM comics c
+LEFT JOIN rate r ON c.id_comics = r.id_comics
+WHERE c.id_comics = 2
+GROUP BY c.id_comics;
+");
 $best_comics = $best_comics_req->fetch();
 ?>
 
@@ -61,8 +74,7 @@ $best_comics = $best_comics_req->fetch();
           <img src="<?php echo $best_comics["image_path"]?>" alt="Comic Image" class="w-full">
           <div class="p-4">
             <div class="flex items-center justify-between text-yellow-400">
-              <span>⭐⭐⭐⭐⭐</span>
-              <span>9.9</span>
+              <span><?php echo $best_comics["notation"]?>👍</span>
             </div>
             <h3 class="text-xl font-bold mt-2"><?php echo $best_comics["title_comics"]?> </h3>
             <p class="text-sm text-gray-400"><?php echo $best_comics["description"]?></p>
@@ -93,7 +105,7 @@ $best_comics = $best_comics_req->fetch();
           <img src=". $comic["image_path"] ." alt=\"Comic\" class=\"w-12 h-12 rounded\">
           <div>
             <a href=\"comics_page.php?title=". $comic["title_comics"] ."\"><h4 class=\"font-semibold\">". $comic["title_comics"]."</h4></a>
-            <div class=\"text-yellow-400\">⭐⭐⭐⭐⭐ <span class=v\"text-sm\">9.9</span></div>
+            <div class=\"text-yellow-400\">".$comic["notation"]."👍</div>
           </div>
         </div>";
         $compt += 1;
@@ -120,12 +132,7 @@ $best_comics = $best_comics_req->fetch();
               <div class="flex items-center justify-between mb-4">
                 <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
                 <div class="flex items-center space-x-1 text-yellow-400">
-                  <span class="text-base">★</span>
-                  <span class="text-base">★</span>
-                  <span class="text-base">★</span>
-                  <span class="text-base">★</span>
-                  <span class="text-base">★</span>
-                  <span class="text-gray-300 text-sm">(9.9)</span>
+                  <span class="text-base"><?php echo $comic["notation"] ?>👍</span>
                 </div>
               </div>
             </div>

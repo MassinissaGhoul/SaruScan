@@ -12,6 +12,10 @@ if (!$title) {
     exit();
 }
 
+$like_req = $pdo->prepare("SELECT count(rate) from rate JOIN comics WHERE comics.id_comics = rate.id_comics AND comics.title_comics = :t");
+$like_req->execute([":t" => $title]);
+$like = $like_req->fetch();
+
 // Préparer les requêtes SQL
 $comics_req = $pdo->prepare("SELECT * FROM comics WHERE title_comics = :t");
 $chapter_req = $pdo->prepare("
@@ -53,6 +57,17 @@ echo $title;
             <div>
                 <h3 class="text-xl font-bold text-white mb-3">
                     <?php echo htmlspecialchars($comic['title_comics']); ?>
+                </h3>
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center">
+                    <span class="ml-4 flex items-center">
+                        <?php echo htmlspecialchars($like["count(rate)"]); ?>
+                        <a
+                            class="ml-2 text-blue-500 hover:text-blue-300 focus:outline-none" 
+                            href="../methode/add_like.php?id_comics= <?php echo $comic["id_comics"] ?>"
+                        >
+                            👍
+                        </a>
+                    </span>
                 </h3>
                 <div class="flex items-center justify-between mb-4">
                     <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
