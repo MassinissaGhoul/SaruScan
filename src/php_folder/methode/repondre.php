@@ -34,7 +34,9 @@ function afficher_commentaires_comics($title, $parent_id = null, $niveau = 0) {
                 <textarea name=\"comment\" style=\"width: 600px; height: 20px;\"></textarea>
                 <button type=\"submit\" class=\"reply-button\">Répondre</button>
             </form>") . "<br>";      
-
+        if (isset($_SESSION["user"]) && $_SESSION["user"]["is_admin"] == 1){
+            echo "<a href=\"../methode/supprimer_commentaire.php?comment_id=". $row["comment_id"] ."\">Supprimer Commentaire</a>" ;
+        }
         // Appel récursif pour afficher les réponses
         afficher_commentaires_comics($title, $row['comment_id'], $niveau + 1);
     }
