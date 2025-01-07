@@ -25,6 +25,9 @@ require_once '../methode/db.php';
                     <a href="homepage.php" class="hover:text-blue-400 transition">Home</a>
                     <a href="category_page.php?category=" class="hover:text-blue-400 transition">Category</a>
                     <a href="favorites.php" class="hover:text-blue-400 transition">Favorite</a>
+                    <?php if (isset($_SESSION["user"]) && $_SESSION["user"]["is_admin"] == 1) {
+                                echo "<a href=\"admin_page.php\" class=\"hover:text-blue-400 transition\">Administateur</a>" ;
+                            } ?>
                 </div>
 
                 <!-- Right - User Options -->

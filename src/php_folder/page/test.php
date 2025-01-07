@@ -1,14 +1,17 @@
 <?php
 require_once '../class/comics.php';
 require_once '../methode/db.php';
+require_once("header.php");
 
-// Gérer la sélection du manga
-if (isset($_GET['manga_id'])) {
-    $_SESSION['manga_id'] = $_GET['manga_id'];
+// Récupérer et valider les paramètres
+$manga_id = $_GET['manga_id'] ?? null;
+$chapter_path = $_GET['chapter_path'] ?? null;
+
+
+if (!$manga_id || !$chapter_path) {
+    echo "<p class='text-center mt-8'>Manga ou chapitre non spécifié.</p>";
+    exit();
 }
-
-// Définir le manga sélectionné
-$manga_id = $_SESSION['manga_id'] ?? null;
 
 // Charger la liste des mangas pour le menu déroulant
 $mangasQuery = $pdo->query("SELECT id_comics, title_comics FROM comics ORDER BY title_comics ASC");
@@ -29,6 +32,38 @@ if ($manga_id) {
     $chaptersQuery->execute([':id_comics' => $manga_id]);
     $chapters = $chaptersQuery->fetchAll(PDO::FETCH_ASSOC);
 }
+
+
+$chapter_id = null;
+foreach ($chapters as $chapter) {
+    if ($chapter['comics_path'] === $chapter_path) {
+        $chapter_id = $chapter['id_chapter'];
+        break;
+    }
+}
+
+if ($chapter_id) {
+    if (!isset($_SESSION['viewed_chapters'])) {
+        $_SESSION['viewed_chapters'] = []; // Initialiser si nécessaire
+    }
+
+    if (!in_array($chapter_id, $_SESSION['viewed_chapters'])) {
+        $_SESSION['viewed_chapters'][] = $chapter_id;
+
+        // Incrémenter le compteur de vues dans la base de données
+        $stmt = $pdo->prepare("UPDATE chapter SET view_count = view_count + 1 WHERE id_chapter = :chapter_id");
+        $stmt->execute([':chapter_id' => $chapter_id]);
+
+    }
+
+} else {
+    echo "<p class='text-center text-red-500'>Chapitre introuvable.</p>";
+    exit();
+}
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 ?>
 
 <!DOCTYPE html>
@@ -37,109 +72,157 @@ if ($manga_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaruScan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Choisissez un manga et un chapitre</h1>
+<body class="bg-gray-900 text-gray-200">
+    <div class="container mx-auto px-4">
+        <h1 class="text-center text-2xl font-bold mt-6">Choisissez un manga et un CHAPITRE</h1>
 
-    <!-- Menu déroulant pour choisir un manga -->
-    <form method="GET" action="">
-        <label for="manga_id">Manga :</label>
-        <select name="manga_id" id="manga_id" onchange="this.form.submit()">
-            <option value="">-- Sélectionner un manga --</option>
-            <?php foreach ($mangas as $manga): ?>
-                <option value="<?php echo htmlspecialchars($manga['id_comics']); ?>" 
-                    <?php echo ($manga_id == $manga['id_comics']) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($manga['title_comics']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </form>
-
-    <?php if ($manga_id): ?>
-        <!-- Menu déroulant pour choisir un chapitre -->
-        <form method="GET" action="">
-            <label for="chapter_path">Chapitre :</label>
-            <input type="hidden" name="manga_id" value="<?php echo htmlspecialchars($manga_id); ?>">
-            <select name="chapter_path" id="chapter_path" onchange="this.form.submit()">
-                <option value="">-- Sélectionner un chapitre --</option>
-                <?php foreach ($chapters as $chapter): ?>
-                    <option value="<?php echo htmlspecialchars($chapter['comics_path']); ?>" 
-                        <?php echo ($chapter_path === $chapter['comics_path']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($chapter['title_chapter']); ?>
+        <!-- Menu déroulant pour choisir un manga -->
+        <form method="GET" action="" class="mt-4">
+            <label for="manga_id" class="block mb-2">Manga :</label>
+            <select name="manga_id" id="manga_id" onchange="this.form.submit()" 
+                class="w-full bg-gray-800 text-gray-200 border border-gray-600 rounded-md px-4 py-2">
+                <option value="">-- Sélectionner un manga --</option>
+                <?php foreach ($mangas as $manga): ?>
+                    <option value="<?php echo htmlspecialchars($manga['id_comics']); ?>" 
+                        <?php echo ($manga_id == $manga['id_comics']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($manga['title_comics']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </form>
-    <?php endif; ?>
 
-    <?php if ($chapter_path): ?>
-        <h2>Pages du chapitre : <?php echo htmlspecialchars($chapter_path); ?></h2>
+        <?php if ($manga_id): ?>
+            <!-- Menu déroulant pour choisir un chapitre -->
+            <form method="GET" action="" class="mt-4">
+                <label for="chapter_path" class="block mb-2">Chapitre :</label>
+                <input type="hidden" name="manga_id" value="<?php echo htmlspecialchars($manga_id); ?>">
+                <select name="chapter_path" id="chapter_path" onchange="this.form.submit()" 
+                    class="w-full bg-gray-800 text-gray-200 border border-gray-600 rounded-md px-4 py-2">
+                    <option value="">-- Sélectionner un chapitre --</option>
+                    <?php foreach ($chapters as $chapter): ?>
+                        <option value="<?php echo htmlspecialchars($chapter['comics_path']); ?>" 
+                            <?php echo ($chapter_path === $chapter['comics_path']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($chapter['title_chapter']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
+        <?php endif; ?>
 
-        <?php
-        // Charger les pages du chapitre sélectionné
-        $pagesArray = [];
-        if (is_dir($chapter_path)) {
-            $files = scandir($chapter_path);
-            foreach ($files as $file) {
-                if (is_file($chapter_path . '/' . $file)) {
-                    $pagesArray[] = $chapter_path . '/' . $file;
+        <?php if ($chapter_path): ?>
+            <div id="page-number" class="text-center text-xl font-semibold mt-8"></div>
+
+            <?php
+            // Charger les pages du chapitre sélectionné
+            $pagesArray = [];
+            if (is_dir($chapter_path)) {
+                $files = scandir($chapter_path);
+                foreach ($files as $file) {
+                    if (is_file($chapter_path . '/' . $file)) {
+                        $pagesArray[] = $chapter_path . '/' . $file;
+                    }
                 }
             }
-        }
-        ?>
+            ?>
 
-        <div id="chapter-pages">
-            <?php foreach ($pagesArray as $index => $pagePath): ?>
-                <img src="<?php echo $pagePath; ?>" style="display: none; max-width: 600px; max-height: 800px;" id="page-<?php echo $index; ?>" class="chapter-page">
-            <?php endforeach; ?>
-        </div>
+            <!-- Conteneur des pages -->
+            <div id="chapter-pages" class="flex flex-col items-center justify-center min-h-screen">
+                <?php foreach ($pagesArray as $index => $pagePath): ?>
+                    <img src="<?php echo $pagePath; ?>" 
+                         style="display: none; max-width: 600px; max-height: 800px;" 
+                         id="page-<?php echo $index; ?>" 
+                         class="chapter-page">
+                <?php endforeach; ?>
+            </div>
+                        <!-- Boutons Navigation -->
+                        <div class="flex justify-between items-center mt-6 w-full max-w-3xl mx-auto">
+                <!-- Bouton Précédent -->
+                <button
+                    onclick="loadPreviousChapter()"
+                    class="px-6 py-2 bg-gray-800 text-gray-200 border border-gray-600 rounded-md hover:bg-gray-700 hover:border-gray-500 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-opacity-50 transition">
+                    PREVIOUS
+                </button>
 
-        <script>
-            let currentPage = 0;
-            const pages = document.querySelectorAll('.chapter-page');
-            const totalPages = pages.length;
+                <!-- Bouton Suivant -->
+                <button
+                    onclick="loadNextChapter()"
+                    class="px-6 py-2 bg-gray-800 text-gray-200 border border-gray-600 rounded-md hover:bg-gray-700 hover:border-gray-500 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-opacity-50 transition">
+                    NEXT
+                </button>
+            </div>
 
-            if (pages.length > 0) {
-                pages[currentPage].style.display = 'block';
-            }
+            <script>
+                let currentPage = 0;
+                const pages = document.querySelectorAll('.chapter-page');
+                const totalPages = pages.length;
 
-            function showPage(pageIndex) {
-                if (pageIndex >= 0 && pageIndex < totalPages) {
-                    pages[currentPage].style.display = 'none';
-                    pages[pageIndex].style.display = 'block';
-                    currentPage = pageIndex;
-                } else if (pageIndex >= totalPages) {
-                    loadNextChapter();
+                if (pages.length > 0) {
+                    pages[currentPage].style.display = 'block';
                 }
-            }
 
-            function loadNextChapter() {
-                const currentChapterPath = new URLSearchParams(window.location.search).get('chapter_path');
-                const chapterOptions = Array.from(document.querySelectorAll('#chapter_path option'));
-                const currentIndex = chapterOptions.findIndex(option => option.value === currentChapterPath);
-                const nextOption = chapterOptions[currentIndex + 1];
+                function showPage(pageIndex) {
+                    if (pageIndex >= 0 && pageIndex < totalPages) {
+                        pages[currentPage].style.display = 'none';
+                        pages[pageIndex].style.display = 'block';
+                        currentPage = pageIndex;
+                        document.getElementById('page-number').textContent = `Page ${currentPage + 1} sur ${totalPages}`;
 
-                if (nextOption) {
-                    // Rediriger vers le chapitre suivant
-                    window.location.href = `?chapter_path=${nextOption.value}&manga_id=<?php echo $manga_id; ?>`;
-                } else {
-                    alert('Fin des chapitres !');
+                    }
+
                 }
-            }
-
-            document.getElementById('chapter-pages').addEventListener('click', (event) => {
-                const pageWidth = pages[currentPage].offsetWidth;
-                const clickPosition = event.clientX;
-
-                if (clickPosition < pageWidth / 2) {
-                    const prevPage = currentPage - 1 >= 0 ? currentPage - 1 : 0;
-                    showPage(prevPage);
-                } else {
-                    const nextPage = currentPage + 1;
-                    showPage(nextPage);
+                if (pages.length > 0) {
+                    document.getElementById('page-number').textContent = `Page 1 sur ${totalPages}`;
                 }
-            });
-        </script>
-    <?php endif; ?>
+
+                function loadNextChapter() {
+                    const currentChapterPath = new URLSearchParams(window.location.search).get('chapter_path');
+                    const chapterOptions = Array.from(document.querySelectorAll('#chapter_path option'));
+                    const currentIndex = chapterOptions.findIndex(option => option.value === currentChapterPath);
+                    const nextOption = chapterOptions[currentIndex + 1];
+
+                    if (nextOption) {
+                        window.location.href = `?chapter_path=${nextOption.value}&manga_id=<?php echo $manga_id; ?>`;
+                    } else {
+                        alert('Fin des chapitres !');
+                    }
+                }
+
+                function loadPreviousChapter() {
+                    const currentChapterPath = new URLSearchParams(window.location.search).get('chapter_path');
+                    const chapterOptions = Array.from(document.querySelectorAll('#chapter_path option'));
+                    const currentIndex = chapterOptions.findIndex(option => option.value === currentChapterPath);
+                    const previousOption = chapterOptions[currentIndex - 1];
+
+                    if (previousOption) {
+                        window.location.href = `?chapter_path=${previousOption.value}&manga_id=<?php echo $manga_id; ?>`;
+                    } else {
+                        alert('Début des chapitres !');
+                    }
+                }
+
+                document.getElementById('chapter-pages').addEventListener('click', (event) => {
+                    const pageWidth = window.innerWidth;
+                    const clickPosition = event.clientX;
+
+                    if (clickPosition < pageWidth / 2) {
+                        if (currentPage > 0) {
+                            showPage(currentPage - 1);
+                        } else {
+                            loadPreviousChapter();
+                        }
+                    } else {
+                        if (currentPage < totalPages - 1) {
+                            showPage(currentPage + 1);
+                        } else {
+                            loadNextChapter();
+                        }
+                    }
+                });
+            </script>
+        <?php endif; ?>
+    </div>
+    <?php require_once("comments_comics.php");?>
 </body>
 </html>

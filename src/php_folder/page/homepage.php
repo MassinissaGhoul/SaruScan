@@ -69,22 +69,45 @@ $best_comics = $best_comics_req->fetch();
     <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
       <!-- Recommendations (Carousel) -->
-      <div>
-        <div class="bg-gray-800 rounded shadow-lg overflow-hidden">
-          <img src="<?php echo $best_comics["image_path"]?>" alt="Comic Image" class="w-full">
-          <div class="p-4">
-            <div class="flex items-center justify-between text-yellow-400">
-              <span><?php echo $best_comics["notation"]?>👍</span>
-            </div>
-            <h3 class="text-xl font-bold mt-2"><?php echo $best_comics["title_comics"]?> </h3>
-            <p class="text-sm text-gray-400"><?php echo $best_comics["description"]?></p>
-          </div>
+      <div id="carousel" class="relative bg-gray-800 rounded-lg shadow-lg overflow-hidden w-full mx-auto h-auto">
+      <?php foreach ($comics as $index => $comic): ?>
+      <div class="carousel-item <?php echo $index === 0 ? 'block' : 'hidden'; ?> absolute inset-0">
+      <!-- Image Section -->
+      
+        <div class="w-full h-4/5">
+          <img src="<?php echo $comic['image_path']; ?>" alt="Comic Image" 
+               class="w-full h-full object-cover aspect-square">
         </div>
-        <div class="flex justify-between mt-4">
-          <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">←</button>
-          <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">→</button>
+
+      <!-- Text Section -->
+      <div class="p-4 h-1/5 flex flex-col justify-center">
+        <div class="flex items-center justify-between text-yellow-400">
+          <span><?php echo $comic["notation"] ?>👍</span>
         </div>
+        <h3 class="text-lg font-bold mt-2 text-center"><?php echo $comic['title_comics']; ?></h3>
+        <p class="text-sm text-gray-400 text-center"><?php echo $comic['description']; ?></p>
       </div>
+    </div>
+  <?php endforeach; ?>
+</div>
+
+      <script>
+        const items = document.querySelectorAll('.carousel-item');
+        let currentIndex = 0;
+
+        const showItem = (index) => {
+          items.forEach((item, i) => {
+            item.classList.toggle('block', i === index);
+            item.classList.toggle('hidden', i !== index);
+          });
+        };
+
+        // Automatic carousel
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % items.length;
+          showItem(currentIndex);
+        }, 5000); // Change every 5 seconds
+      </script>
 
       <!-- Popular Comics -->
       <div>
@@ -129,8 +152,16 @@ $best_comics = $best_comics_req->fetch();
           <div class="w-3/5 p-6 flex flex-col justify-between">
             <div>
             <a href="comics_page.php?title=<?php echo $comic["title_comics"] ?>"><h3 class="text-xl font-bold text-white mb-3"> <?php echo $comic["title_comics"] ?></h3></a>
-              <div class="flex items-center justify-between mb-4">
-                <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manhwa</span>
+            <form method="POST" action="../methode/add_to_favorites.php" class="ml-4">
+                  <input type="hidden" name="comic_id" value="<?php echo $comic['id_comics']; ?>">
+                  <button
+                    type="submit"
+                    class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 transition">
+                    Ajouter aux Favoris
+                  </button>
+              </form>  
+            <div class="flex items-center justify-between mb-4">
+                <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">Manga</span>
                 <div class="flex items-center space-x-1 text-yellow-400">
                   <span class="text-base"><?php echo $comic["notation"] ?>👍</span>
                 </div>
@@ -156,7 +187,7 @@ $best_comics = $best_comics_req->fetch();
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-center text-gray-400 py-4">
-    <p class="animate-scroll">Animation de nos noms de gauche à droite en mode add</p>
+    <p class="animate-scroll">Reda Steven Massi SaruScan</p>
   </footer>
 </body>
 

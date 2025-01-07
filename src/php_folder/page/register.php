@@ -49,6 +49,9 @@ if (isset($_POST['submit'])) {
 
       // Registration successful
       $_SESSION['success'] = "Account created successfully! Please log in.";
+      $_SESSION['id_user'] = $pdo->lastInsertId(); // Stocker l'ID utilisateur dans la session
+      $_SESSION['username'] = $username;          // Stocker le nom d'utilisateur
+      $_SESSION['email'] = $email;                // Stocker l'email
       header('Location: homepage.php');
       exit();
     }
@@ -93,7 +96,7 @@ if (isset($_POST['submit'])) {
   <div class="bg-gray-800 p-10 rounded-lg shadow-lg w-full max-w-md">
     <!-- Logo -->
     <div class="flex justify-center mb-6">
-      <img src="" alt="Logo" class="h-16 w-16">
+      <img src="gub.png" alt="Logo" class="h-16 w-16">
     </div>
 
     <!-- Form -->

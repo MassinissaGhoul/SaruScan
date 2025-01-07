@@ -1,17 +1,24 @@
 @tailwind base;
+
 @tailwind components;
+
 @tailwind utilities;
 
 /* Image */
+
 .comic-image {
   max-height: 250px;
 }
+
 /* Titre */
+
 .comic-container h3 {
   font-size: 1.75rem;
   line-height: 1.25rem;
 }
+
 /* Chapitre individuel */
+
 .chapter-item {
   display: flex;
   justify-content: space-between;
@@ -24,10 +31,12 @@
 }
 
 .chapter-item:hover {
-  background-color: #1f2937; /* Seulement la couleur change */
+  background-color: #1f2937;
+  /* Seulement la couleur change */
 }
 
 /* Dernier chapitre sans bordure */
+
 .chapter-item:last-child {
   border-bottom: none;
 }

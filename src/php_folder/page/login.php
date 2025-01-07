@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
 
   <div class="bg-gray-800 p-10 rounded-lg shadow-lg w-full max-w-md">
     <div class="flex justify-center mb-6">
-      <img src="" alt="Logo" class="h-16 w-16">
+      <img src="gub.png" alt="Logo" class="h-16 w-16">
     </div>
 
     <form action="login.php" method="POST">
