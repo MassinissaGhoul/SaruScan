@@ -1,12 +1,12 @@
 <?php
 include_once("header.php");
 
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['user']['id_user'])) {
   echo "<script>alert('Connectez-vous pour voir vos favoris.'); window.location.href = '../page/login.php';</script>";
   exit;
 }
 
-$id_user = $_SESSION['id_user'];
+$id_user = $_SESSION['user']['id_user'];
 
 // Récupérer les favoris de l'utilisateur
 $stmt = $pdo->prepare("

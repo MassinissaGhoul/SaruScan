@@ -1,14 +1,14 @@
 <?php
-session_start();
 require_once '../methode/db.php';
+session_start();
 
 // Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['user'])) {
   echo "<script>alert('Vous devez être connecté pour ajouter un favori.'); window.location.href = '../page/login.php';</script>";
   exit;
 }
 
-$id_user = intval($_SESSION['id_user']);
+$id_user = intval($_SESSION['user']['id_user']);
 $id_comics = isset($_POST['comic_id']) && is_numeric($_POST['comic_id']) ? intval($_POST['comic_id']) : null;
 
 // Vérifier que l'ID de l'utilisateur est valide

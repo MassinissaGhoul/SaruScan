@@ -83,6 +83,16 @@ $bestComic = $comicsManager->getBestComic(2);  // Meilleur comic pour le carrous
               <a href="comics_page.php?title=<?php echo $comic["title_comics"]; ?>">
                 <h3 class="text-xl font-bold text-white mb-3"><?php echo $comic["title_comics"]; ?></h3>
               </a>
+              <?php if(isset($_SESSION["user"])): ?>
+                <form method="POST" action="../methode/add_to_favorites.php" class="ml-4">
+                  <input type="hidden" name="comic_id" value="<?php echo $comic['id_comics']; ?>">
+                  <button
+                    type="submit"
+                    class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 transition">
+                    Ajouter aux Favoris
+                  </button>
+                </form>
+              <?php endif ?>
               <div class="flex items-center justify-between mb-4">
                 <span class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full"><?php echo $comic["category"]; ?></span>
                 <div class="flex items-center space-x-1 text-yellow-400">

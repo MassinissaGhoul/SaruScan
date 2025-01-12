@@ -4,6 +4,11 @@ require_once("../class/admin.php");
 require_once("../class/users.php");
 // Configuration de la base de données
 
+if (!isset($_SESSION["user"]) || $_SESSION["user"]["is_admin"] != 1) {
+    header("Location: ../page/login.php");
+    die();
+}
+
 try {
     $comicsManager = new ComicsManager($pdo);
     $chapterManager = new ChapterManager($pdo);
