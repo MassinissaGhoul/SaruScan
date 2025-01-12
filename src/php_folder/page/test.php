@@ -133,22 +133,22 @@ error_reporting(E_ALL);
             }
             ?>
 
-<!-- Conteneur des pages (mode Manga - une page à la fois) -->
-<div id="chapter-pages" class="flex flex-col items-center justify-center min-h-screen">
-    <?php foreach ($pagesArray as $index => $pagePath): ?>
-        <img src="<?php echo $pagePath; ?>" 
-             style="display: none;" 
-             id="page-<?php echo $index; ?>" 
-             class="chapter-page w-full max-w-3xl max-h-[80vh] object-contain rounded-lg shadow-md">
-    <?php endforeach; ?>
-</div>
+            <!-- Conteneur des pages (mode Manga - une page à la fois) -->
+            <div id="chapter-pages" class="flex flex-col items-center justify-center min-h-screen">
+                <?php foreach ($pagesArray as $index => $pagePath): ?>
+                    <img src="<?php echo $pagePath; ?>" 
+                        style="display: none;" 
+                        id="page-<?php echo $index; ?>" 
+                        class="chapter-page w-full max-w-3xl max-h-[80vh] object-contain rounded-lg shadow-md">
+                <?php endforeach; ?>
+            </div>
 
-<!-- Conteneur des pages pour le mode webtoon (scroll vertical) -->
-<div id="webtoon-mode" class="hidden flex flex-col items-center mt-6 space-y-6">
-    <?php foreach ($pagesArray as $pagePath): ?>
-        <img src="<?php echo $pagePath; ?>" class="webtoon-image w-full max-w-3xl max-h-[900px] object-contain rounded-lg shadow-md">
-    <?php endforeach; ?>
-</div>
+            <!-- Conteneur des pages pour le mode webtoon (scroll vertical) -->
+            <div id="webtoon-mode" class="hidden flex flex-col items-center mt-6 space-y-6">
+                <?php foreach ($pagesArray as $pagePath): ?>
+                    <img src="<?php echo $pagePath; ?>" class="webtoon-image w-full max-w-3xl max-h-[900px] object-contain rounded-lg shadow-md">
+                <?php endforeach; ?>
+            </div>
 
             <div class="flex justify-between items-center mt-6 w-full max-w-3xl mx-auto">
                 <!-- Bouton Précédent -->
