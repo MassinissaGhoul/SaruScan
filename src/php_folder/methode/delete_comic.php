@@ -1,5 +1,5 @@
 <?php
-require_once("admin.php");
+require_once("../class/admin.php");
 require_once("db.php");
 
 try {

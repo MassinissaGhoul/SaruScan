@@ -1,7 +1,7 @@
 <?php
 // require_once("admin.php");
 // require_once("comics.php");
-require_once("users.php");
+require_once("../class/users.php");
 require_once("db.php");
 
 try {
@@ -12,7 +12,6 @@ try {
     exit();
 }
 
-// Récupération de l'ID envoyé via JSON
 $data = json_decode(file_get_contents("php://input"), true);
 if (!isset($data['id'])) {
     header('Content-Type: application/json');

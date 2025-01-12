@@ -1,6 +1,6 @@
 <?php
-require_once("admin.php");
-require_once("header.php");
+require_once("../class/admin.php");
+require_once("../page/header.php");
 require_once("db.php");
 try {
     $comicsManager = new ComicsManager($pdo);
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_comic'])) {
 
     if (!empty($title) && !empty($author) && !empty($category)) {
         $comicsManager->updateComic($comicId, $title, $author, $category);
-        header("Location: admin_page.php");
+        header("Location: ../page/admin_page.php");
         exit();
     } else {
         echo "Tous les champs sont requis pour modifier un comic.";
@@ -39,18 +39,25 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-<h2>Modifier un Comic</h2>
-<form action="edit_comic.php" method="post">
+<h2 class="text-2xl font-bold mb-4 text-white">Modifier un Comic</h2>
+<form action="edit_comic.php" method="post" class="bg-gray-800 p-6 shadow-md rounded-lg">
     <input type="hidden" name="edit_comic" value="1">
     <input type="hidden" name="id_comic" value="<?= htmlspecialchars($comic['id_comics']) ?>">
-    <label for="title">Titre</label>
-    <input type="text" id="title" name="title" value="<?= htmlspecialchars($comic['title_comics']) ?>" required><br>
 
-    <label for="author">Auteur</label>
-    <input type="text" id="author" name="author" value="<?= htmlspecialchars($comic['author']) ?>" required><br>
+    <div class="mb-4">
+        <label for="title" class="block text-sm font-medium text-white">Titre</label>
+        <input type="text" id="title" name="title" value="<?= htmlspecialchars($comic['title_comics']) ?>" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white">
+    </div>
 
-    <label for="category">Catégorie</label>
-    <input type="text" id="category" name="category" value="<?= htmlspecialchars($comic['category']) ?>" required><br>
+    <div class="mb-4">
+        <label for="author" class="block text-sm font-medium text-white">Auteur</label>
+        <input type="text" id="author" name="author" value="<?= htmlspecialchars($comic['author']) ?>" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white">
+    </div>
 
-    <button type="submit">Mettre à jour</button>
+    <div class="mb-4">
+        <label for="category" class="block text-sm font-medium text-white">Catégorie</label>
+        <input type="text" id="category" name="category" value="<?= htmlspecialchars($comic['category']) ?>" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white">
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Mettre à jour</button>
 </form>

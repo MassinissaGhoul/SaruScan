@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
 
     if (!empty($email) && !empty($username)) {
         $userManager->updateUser($userId, $email, $username, $is_admin);
-        header("Location: admin_page.php");
+        header("Location: ../page/admin_page.php");
         exit();
     } else {
         echo "Tous les champs sont requis pour modifier un utilisateur.";
@@ -41,18 +41,25 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-<h2>Modifier un Utilisateur</h2>
-<form action="edit_user.php" method="post">
+<h2 class="text-2xl font-bold mb-4 text-white">Modifier un Utilisateur</h2>
+<form action="edit_user.php" method="post" class="bg-gray-800 p-6 shadow-md rounded-lg">
     <input type="hidden" name="edit_user" value="1">
     <input type="hidden" name="id_user" value="<?= htmlspecialchars($user['id_user']) ?>">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required><br>
 
-    <label for="username">Nom d'utilisateur</label>
-    <input type="text" id="username" name="username" value="<?= htmlspecialchars($user['username']) ?>" required><br>
+    <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-white">Email</label>
+        <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white">
+    </div>
 
-    <label for="is_admin">Administrateur</label>
-    <input type="checkbox" id="is_admin" name="is_admin" <?= $user['is_admin'] ? 'checked' : '' ?>><br>
+    <div class="mb-4">
+        <label for="username" class="block text-sm font-medium text-white">Nom d'utilisateur</label>
+        <input type="text" id="username" name="username" value="<?= htmlspecialchars($user['username']) ?>" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white">
+    </div>
 
-    <button type="submit">Mettre à jour</button>
+    <div class="mb-4 flex items-center">
+        <input type="checkbox" id="is_admin" name="is_admin" <?= $user['is_admin'] ? 'checked' : '' ?> class="mr-2 rounded border-gray-600 bg-gray-700">
+        <label for="is_admin" class="text-white">Administrateur</label>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Mettre à jour</button>
 </form>
