@@ -74,19 +74,72 @@ class ComicsManager
     {
         return $this->comics;
     }
-    
+
     public function display_comics()
     {
         foreach ($this->comics as $comics) {
-            echo '<img src :' . $comics->get_img() . ' >';
-            echo "ID: " . $comics->get_id_comics() . '<br>';
-            echo "Title: " . $comics->get_title_comics() . '<br>';
-            echo "Author: " . $comics->get_author() . '<br>';
-            echo "category: " . $comics->get_category() . '<br>';
-            echo "Created At: " . $comics->get_created_at() . '<br>';
+            echo '<img src="' . htmlspecialchars($comics->get_img()) . '" >';
+            echo "ID: " . htmlspecialchars($comics->get_id_comics()) . '<br>';
+            echo "Title: " . htmlspecialchars($comics->get_title_comics()) . '<br>';
+            echo "Author: " . htmlspecialchars($comics->get_author()) . '<br>';
+            echo "Category: " . htmlspecialchars($comics->get_category()) . '<br>';
+            echo "Created At: " . htmlspecialchars($comics->get_created_at()) . '<br>';
+            echo "Likes: " . $this->getThumbsUpCount($comics->get_id_comics()) . " 👍<br>";
             echo "<hr>";
         }
     }
+
+    // Méthode pour récupérer le nombre total de pouces levés pour un comic spécifique
+    public function getThumbsUpCount($comicId)
+    {
+        global $pdo;
+        $stmt = $pdo->prepare("
+            SELECT COUNT(rate) AS thumbs_up 
+            FROM rate 
+            WHERE id_comics = :comic_id AND rate = 1
+        ");
+        $stmt->execute([':comic_id' => $comicId]);
+        $result = $stmt->fetch();
+
+        return $result['thumbs_up'] ?? 0;  // Retourne 0 si aucun like n'est trouvé
+    }
+
+    // Méthode pour récupérer tous les comics avec leurs pouces levés
+    public function getAllComicsWithRatings()
+    {
+        global $pdo;
+        $stmt = $pdo->query("
+            SELECT 
+                c.id_comics, 
+                c.title_comics, 
+                c.author, 
+                c.created_at, 
+                c.image_path, 
+                c.category, 
+                COUNT(r.rate) AS thumbs_up 
+            FROM comics c
+            LEFT JOIN rate r ON c.id_comics = r.id_comics AND r.rate = 1
+            GROUP BY c.id_comics, c.title_comics, c.author, c.created_at, c.image_path, c.category
+        ");
+        $comicsWithRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $comicsList = [];
+        foreach ($comicsWithRatings as $comicData) {
+            $comic = new Comics(
+                $comicData['id_comics'],
+                $comicData['title_comics'],
+                $comicData['author'],
+                $comicData['created_at'],
+                $comicData['image_path'],
+                $comicData['category']
+            );
+            $comic->thumbs_up = $comicData['thumbs_up']; // Ajout d'un champ dynamique pour les likes
+            $comicsList[] = $comic;
+        }
+
+        return $comicsList;
+    }
+
     public function search_comics($search)
     {
         $results = [];
@@ -99,20 +152,21 @@ class ComicsManager
 
         return $results;
     }
+
     public function rateComic($userId, $comicId, $rate)
-{
-    global $pdo;
-    $stmt = $pdo->prepare("
-        INSERT INTO rate (id_user, id_comics, rate) 
-        VALUES (:user_id, :comic_id, :rate)
-        ON DUPLICATE KEY UPDATE rate = :rate
-    ");
-    $stmt->execute([
-        ':user_id' => $userId,
-        ':comic_id' => $comicId,
-        ':rate' => $rate
-    ]);
-}
+    {
+        global $pdo;
+        $stmt = $pdo->prepare("
+            INSERT INTO rate (id_user, id_comics, rate) 
+            VALUES (:user_id, :comic_id, :rate)
+            ON DUPLICATE KEY UPDATE rate = :rate
+        ");
+        $stmt->execute([
+            ':user_id' => $userId,
+            ':comic_id' => $comicId,
+            ':rate' => $rate
+        ]);
+    }
 
     public function getAverageRating($comicId)
     {
@@ -125,10 +179,8 @@ class ComicsManager
         $stmt->execute([':comic_id' => $comicId]);
         $average = $stmt->fetchColumn();
 
-        // Vérifier si la moyenne est nulle et retourner une valeur par défaut (ex. 0)
         return $average !== null ? round($average, 1) : 0;
     }
-
 }
 
 class Chapter
