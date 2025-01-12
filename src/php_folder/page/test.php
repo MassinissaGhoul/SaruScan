@@ -65,7 +65,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -112,6 +111,13 @@ error_reporting(E_ALL);
         <?php endif; ?>
 
         <?php if ($chapter_path): ?>
+            <div class="flex justify-center mt-8">
+                <!-- Bouton pour changer de mode de lecture -->
+                <button id="toggle-mode" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold">
+                    Mode Webtoon
+                </button>
+            </div>
+
             <div id="page-number" class="text-center text-xl font-semibold mt-8"></div>
 
             <?php
@@ -127,17 +133,24 @@ error_reporting(E_ALL);
             }
             ?>
 
-            <!-- Conteneur des pages -->
-            <div id="chapter-pages" class="flex flex-col items-center justify-center min-h-screen">
-                <?php foreach ($pagesArray as $index => $pagePath): ?>
-                    <img src="<?php echo $pagePath; ?>" 
-                         style="display: none; max-width: 600px; max-height: 800px;" 
-                         id="page-<?php echo $index; ?>" 
-                         class="chapter-page">
-                <?php endforeach; ?>
-            </div>
-                        <!-- Boutons Navigation -->
-                        <div class="flex justify-between items-center mt-6 w-full max-w-3xl mx-auto">
+<!-- Conteneur des pages (mode Manga - une page à la fois) -->
+<div id="chapter-pages" class="flex flex-col items-center justify-center min-h-screen">
+    <?php foreach ($pagesArray as $index => $pagePath): ?>
+        <img src="<?php echo $pagePath; ?>" 
+             style="display: none;" 
+             id="page-<?php echo $index; ?>" 
+             class="chapter-page w-full max-w-3xl max-h-[80vh] object-contain rounded-lg shadow-md">
+    <?php endforeach; ?>
+</div>
+
+<!-- Conteneur des pages pour le mode webtoon (scroll vertical) -->
+<div id="webtoon-mode" class="hidden flex flex-col items-center mt-6 space-y-6">
+    <?php foreach ($pagesArray as $pagePath): ?>
+        <img src="<?php echo $pagePath; ?>" class="webtoon-image w-full max-w-3xl max-h-[900px] object-contain rounded-lg shadow-md">
+    <?php endforeach; ?>
+</div>
+
+            <div class="flex justify-between items-center mt-6 w-full max-w-3xl mx-auto">
                 <!-- Bouton Précédent -->
                 <button
                     onclick="loadPreviousChapter()"
@@ -157,6 +170,10 @@ error_reporting(E_ALL);
                 let currentPage = 0;
                 const pages = document.querySelectorAll('.chapter-page');
                 const totalPages = pages.length;
+                const chapterPagesContainer = document.getElementById('chapter-pages');
+                const webtoonModeContainer = document.getElementById('webtoon-mode');
+                const toggleModeButton = document.getElementById('toggle-mode');
+                let isWebtoonMode = false;
 
                 if (pages.length > 0) {
                     pages[currentPage].style.display = 'block';
@@ -168,10 +185,9 @@ error_reporting(E_ALL);
                         pages[pageIndex].style.display = 'block';
                         currentPage = pageIndex;
                         document.getElementById('page-number').textContent = `Page ${currentPage + 1} sur ${totalPages}`;
-
                     }
-
                 }
+
                 if (pages.length > 0) {
                     document.getElementById('page-number').textContent = `Page 1 sur ${totalPages}`;
                 }
@@ -220,9 +236,22 @@ error_reporting(E_ALL);
                         }
                     }
                 });
+
+                toggleModeButton.addEventListener('click', () => {
+                    isWebtoonMode = !isWebtoonMode;
+                    if (isWebtoonMode) {
+                        chapterPagesContainer.classList.add('hidden');
+                        webtoonModeContainer.classList.remove('hidden');
+                        toggleModeButton.textContent = "Mode Manga";
+                    } else {
+                        chapterPagesContainer.classList.remove('hidden');
+                        webtoonModeContainer.classList.add('hidden');
+                        toggleModeButton.textContent = "Mode Webtoon";
+                    }
+                });
             </script>
         <?php endif; ?>
     </div>
-    <?php require_once("comments_comics.php");?>
+    <?php require_once("comments_comics.php"); ?>
 </body>
 </html>
