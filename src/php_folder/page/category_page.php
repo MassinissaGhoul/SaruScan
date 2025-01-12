@@ -7,7 +7,7 @@ require_once '../class/comics.php';  // Inclusion de la classe ComicsManager
 $choice_category = $_GET["category"] ?? null;
 
 // Initialisation du gestionnaire de comics
-$comicsManager = new ComicsManager();
+$comicsManager = new ComicsManager($pdo);
 
 // Requête pour récupérer les comics selon la catégorie
 if ($choice_category) {

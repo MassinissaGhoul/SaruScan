@@ -26,7 +26,7 @@ function afficher_commentaires_comics($title, $parent_id = null, $niveau = 0)
     while ($row = $stmt->fetch()) {
         echo "<div class='flex flex-col bg-gray-800 p-6 rounded-lg shadow-md mb-4' style='margin-left:" . ($niveau * 20) . "px;'>";
         echo "<div class='flex items-center space-x-4 mb-4'>";
-        echo "<img class='w-16 h-16 rounded-full' src='" . htmlspecialchars($row['image_path']) . "' alt='Image de profil'>";
+        echo "<img class='w-16 h-16 rounded-full' src='" . $row['image_path'] . "' alt='Image de profil'>";
         echo "<div>";
         echo "<h2 class='text-xl font-semibold text-gray-300'>" . htmlspecialchars($row['username']) . "</h2>";
         echo "<span class='text-sm text-gray-400'>" . date("d.m.Y", strtotime($row['created_at'])) . "</span>";

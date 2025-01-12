@@ -58,11 +58,13 @@ class Comics
 
 class ComicsManager
 {
+    private $pdo;
     private $comics = [];
 
-    public function __construct($comics = [])
+    public function __construct($pdo)
     {
-        $this->comics = $comics;
+        $this->pdo = $pdo;  // Initialisation de la connexion PDO
+
     }
 
     public function add_comics($comics)
@@ -180,6 +182,64 @@ class ComicsManager
         $average = $stmt->fetchColumn();
 
         return $average !== null ? round($average, 1) : 0;
+    }
+    public function getPopularComics()
+    {
+        $stmt = $this->pdo->query("
+            SELECT 
+                c.id_comics,
+                c.title_comics,
+                c.image_path,
+                c.author,
+                c.created_at,
+                c.category,
+                c.description,
+                SUM(ch.view_count) AS total_views,
+                COUNT(DISTINCT r.id_user) AS notation
+            FROM comics c
+            LEFT JOIN chapter ch ON c.id_comics = ch.id_comics
+            LEFT JOIN rate r ON c.id_comics = r.id_comics
+            GROUP BY c.id_comics, c.title_comics, c.image_path, c.author, c.created_at, c.category, c.description
+            ORDER BY total_views DESC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRecentComics()
+    {
+        $stmt = $this->pdo->query("
+            SELECT 
+                c.id_comics, 
+                c.title_comics, 
+                c.image_path, 
+                c.author, 
+                c.created_at, 
+                c.category, 
+                c.description, 
+                SUM(ch.view_count) AS total_views,
+                COUNT(DISTINCT r.id_user) AS notation
+            FROM comics c
+            LEFT JOIN chapter ch ON c.id_comics = ch.id_comics
+            LEFT JOIN rate r ON c.id_comics = r.id_comics
+            GROUP BY c.id_comics
+            ORDER BY c.created_at DESC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getBestComic($comicId)
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                c.*,
+                COUNT(DISTINCT r.id_user) AS notation
+            FROM comics c
+            LEFT JOIN rate r ON c.id_comics = r.id_comics
+            WHERE c.id_comics = :comicId
+            GROUP BY c.id_comics
+        ");
+        $stmt->execute([':comicId' => $comicId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 

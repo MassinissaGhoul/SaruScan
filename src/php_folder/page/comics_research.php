@@ -3,7 +3,7 @@ require_once 'header.php';
 require_once '../class/comics.php';
 
 // Récupération des comics dans la base de données
-$comicsManager = new ComicsManager();
+$comicsManager = new ComicsManager($pdo);
 $query = $pdo->query("SELECT * FROM comics ");
 
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
